@@ -20,18 +20,18 @@ RubyInstaller的安装界面
 
 DevKit只需解压到一个文件夹
 
-![Alt text](data:image,local://dkiu.jpg)
+![Alt text](/images/20130228/dkiu.jpg)
 
 然后启动Ruby命令框，用CD进入存放DevKit的目录，执行以下命令
 
     ruby dk.rb init
     ruby dk.rb install
     
-![Alt text](data:image,local://dkiu2.jpg)
+![Alt text](/images/20130228/dkiu2.jpg)
 
 Git安装只需按照提示默认点击下一步，在“Configuring the line ending conversions”界面选择换行格式，选择“Checkout as-is, commit Unix-style line endings”(参考链接：[Win7上Git安装及配置过程](http://www.cnblogs.com/sunny5156/archive/2012/10/23/2735799.html))，如下图
 
-![Alt text](data:image,local://gitiu.jpg)
+![Alt text](/images/20130228/gitiu.jpg)
 
 安装Octopress前要改变一个软件更新源，运行命令
 
@@ -39,48 +39,48 @@ Git安装只需按照提示默认点击下一步，在“Configuring the line en
     gem sources -r http://rubygems.org/
     gem sources -l
 
-![Alt text](data:image,local://ociu.jpg)
+![Alt text](/images/20130228/ociu.jpg)
 
 安装Octopress到D:\Blog(参考链接：[Octopress官方安装帮助](http://octopress.org/docs/setup/))，打开Git Bash，运行命令
 
     git clone git://github.com/imathis/octopress.git /d/Blog
 
-![Alt text](data:image,local://ociu2.jpg)
+![Alt text](/images/20130228/ociu2.jpg)
 
 打开Octopress安装目录下的``D:\Blog\Gemfile``，将第一行的source改成国内淘宝的``http://ruby.taobao.org/``
 
-![Alt text](data:image,local://ociu3.jpg)
+![Alt text](/images/20130228/ociu3.jpg)
 
 进入Octopress安装目录，安装bundler，运行命令
 
     gem install bundler
     bundle install
 
-![Alt text](data:image,local://ociu4.jpg)
+![Alt text](/images/20130228/ociu4.jpg)
 
 安装Octopress默认的主题，运行命令
 
     rake install
 
-![Alt text](data:image,local://ociu5.jpg)
+![Alt text](/images/20130228/ociu5.jpg)
 
 最后是生成和预览博客，运行命令
 
     rake generate
     rake preview
 
-![Alt text](data:image,local://ociu6.jpg)
+![Alt text](/images/20130228/ociu6.jpg)
 
 然后浏览器打开页面``http://localhost:4000/``就可以预览博客了(参考链接：[用Octopress免费静态博客系统在Github免费空间上搭建个人网站](http://www.freehao123.com/octopress/))。
 ####二、更改环境变量以支持生成有中文的文章
 打开计算机–属性–高级系统设置–环境变量，新增``LANG``和``LC_ALL``，值都是``zh_CN.UTF-8``，完成后确定保存
 
-![Alt text](data:image,local://hj.jpg)
+![Alt text](/images/20130228/hj.jpg)
 
 ####三、将博客提交到Github
 先申请一个[Github](https://github.com/)账号，再点击右上角用户名旁边的create a new repo创建一个项目(参考链接：[免费开源Github Pages空间可绑域名搭建个人博客存放图片文件](http://www.freehao123.com/github-pages/))，注意repository name必须是``你的用户名.github.com``，这样最后才能直接用``你的用户名.github.com``这个二级域名直接访问你的页面
 
-![Alt text](data:image,local://gh.jpg)
+![Alt text](/images/20130228/gh.jpg)
 
 打开git bash，依次运行下列命令
 
@@ -88,19 +88,19 @@ Git安装只需按照提示默认点击下一步，在“Configuring the line en
     git config --global user.email "邮箱"
     git config --global credential.helper cache
 
-![Alt text](data:image,local://gh2.jpg)
+![Alt text](/images/20130228/gh2.jpg)
 
 如入命令``cd ~/.ssh``看看本地有没有ssh keys。如果没有的话运行命令``ssh-keygen -t rsa -C "邮箱"``来创建SSH Keys。然后会要你选择保存的位置，直接回车就可。输入密码后创建成功。然后在你刚才保存的文件路径中产生一个id_rsa.pub文件。
 
-![Alt text](data:image,local://gh3.jpg)
+![Alt text](/images/20130228/gh3.jpg)
 
 用记事本打开id_rsa.pub，复制里面的东西粘贴到Github项目的SSH Keys中
 
-![Alt text](data:image,local://gh4.jpg)
+![Alt text](/images/20130228/gh4.jpg)
 
 输入命令``ssh -T git@github.com``，输入密码后测试是否可以成功连接。如下图就表明连接成功了
 
-![Alt text](data:image,local://gh5.jpg)
+![Alt text](/images/20130228/gh5.jpg)
 
 最后进入博客安装目录``D:\Blog``运行如下命令，再打开你的Github的二级域名就可以看到刚刚提交的Octopress博客了
 
@@ -108,7 +108,7 @@ Git安装只需按照提示默认点击下一步，在“Configuring the line en
     rake generate
     rake deploy
 
-![Alt text](data:image,local://gh6.jpg)
+![Alt text](/images/20130228/gh6.jpg)
 
 ####四、新建和发布页面
 发布一个日志前，先在博客目录``D:\Blog\source\_posts\``中生成一个MD文件，类似``2013-03-10-title.markdown``，是日志的编辑文件。运行命令
