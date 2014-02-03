@@ -143,7 +143,7 @@ Git安装只需按照提示默认点击下一步，在“Configuring the line en
 在文件``source/_includes/post/sharing.html``中加入代码，效果如下
 
     <div class="sharing">
-      \{% if site.weibo_share %\}
+      ``\{% if site.weibo_share %\}``
       <span>
       <iframe 
         width="86" 
