@@ -140,7 +140,7 @@ Git安装只需按照提示默认点击下一步，在“Configuring the line en
 
 其他不错的主题：[slash](http://zespia.tw/Octopress-Theme-Slash/index_tw.html#overview)/[Fabric](http://panks.me/blog/2013/01/new-octopress-theme-fabric/)/[BlogTheme](https://github.com/rastersize/BlogTheme)/[官方推荐](https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes)
 ####六、添加分享到微博按钮
-在文件``source/_includes/post/sharing.html``中加入代码，效果如下
+在文件``source/_includes/post/sharing.html``中加入代码，效果如下nimeia !
 
     <div class="sharing">
       ``\{% if site.weibo_share %\}``
