@@ -2,7 +2,7 @@
 layout: post
 title: 用Github和Octopress搭建博客
 category : lessons
-tagline: "备忘"
+tagline: "学习"
 tags : [github, octopress]
 ---
 最先玩过[网易博客](http://cheesefan.blog.163.com/),但是网易博客广告太多（虽然相比同类型的第三方托管博客广告要少很多，这也是最初选择它的原因），同时定制性太差，代码高亮也在部分主题下面也显示得不是太好。后来分别在[新浪SAE](http://sae.sina.com.cn/)和[百度BAE](http://developer.baidu.com/bae)上搭建过[WordPress](http://cn.wordpress.org/)的博客，[WordPress](http://cn.wordpress.org/)有丰富的主题插件资源，但正是由于它功能太过完善，显得它有点庞大，加载速度让我难以接受。
@@ -143,7 +143,7 @@ Git安装只需按照提示默认点击下一步，在“Configuring the line en
 在文件``source/_includes/post/sharing.html``中加入代码，效果如下
 
     <div class="sharing">
-      {% if site.weibo_share %}
+      \{% if site.weibo_share %\}
       <span>
       <iframe 
         width="86" 
@@ -154,8 +154,8 @@ Git安装只需按照提示默认点击下一步，在“Configuring the line en
           "http://hits.sinajs.cn/A1/weiboshare.html?url={{ site.url }}{{ page.url }}&amp;type=6&amp;{% if site.weibo_uid %}ralateUid={{ site.weibo_uid }}&amp;{% endif %}language=zh_cn" allowtransparency="true">
       </iframe>
       </span>
-      {% endif %}
-      {% if site.twitter_tweet_button %}
+      \{% endif %\}
+      \{% if site.twitter_tweet_button %\}
       <a href="http://twitter.com/share" class="twitter-share-button" data-url="{{ site.url }}{{ page.url }}" data-via="{{ site.twitter_user }}" data-counturl="{{ site.url }}{{ page.url }}" >Tweet</a>
       {% endif %}
       {% if site.google_plus_one %}
