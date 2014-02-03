@@ -16,7 +16,7 @@ tags : [github, octopress]
 
 RubyInstaller的安装界面
 
-![Alt text](data:image,local://rbiu.jpg)
+![Alt text](/images/20130228/rbiu.jpg)
 
 DevKit只需解压到一个文件夹
 
