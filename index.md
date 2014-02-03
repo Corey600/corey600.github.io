@@ -1,11 +1,9 @@
 ---
 layout: page
-title: Home Page
-tagline: Welcome to my blog.
+title: Home
+tagline: Here's posts list.
 ---
 {% include JB/setup %}
-
-Here's posts list.
 
 <ul class="posts">
   {% for post in site.posts %}
