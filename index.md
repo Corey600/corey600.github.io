@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Corey's Blog
+title: Home Page
 tagline: Welcome to my blog.
 ---
 {% include JB/setup %}
