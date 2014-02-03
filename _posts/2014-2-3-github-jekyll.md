@@ -1,13 +1,11 @@
 ---
 layout: post
+title: Git+Jekyll
 category : lessons
-tagline: "Supporting tagline"
-tags : [intro, beginner, jekyll, tutorial]
+tagline: "学习记录"
+tags : [jekyll, github]
 ---
 
-Github+Jekyll
-====================
-********************
 * ##_安装jekyll_
 
 ###_1.安装RubyInstaller和DevKit_
