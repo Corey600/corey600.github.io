@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Hello!
-tagline: 欢迎页面
+title: Corey's Blog
+tagline: Welcome to my blog.
 ---
 {% include JB/setup %}
 
