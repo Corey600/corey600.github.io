@@ -142,6 +142,7 @@ Git安装只需按照提示默认点击下一步，在“Configuring the line en
 ####六、添加分享到微博按钮
 在文件``source/_includes/post/sharing.html``中加入代码，效果如下
 
+```
     <div class="sharing">
       \{% if site.weibo_share %\}
       <span>
@@ -165,6 +166,7 @@ Git安装只需按照提示默认点击下一步，在“Configuring the line en
         <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
       {% endif %}
     </div>
+```
 
 然后在博客根目录下的配置文件``_config.yml``文件中加入代码
 
