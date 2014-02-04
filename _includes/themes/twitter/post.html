@@ -28,8 +28,6 @@
   {% endunless %}  
 
     <hr>
-    <ul>
-    <li>
     <div class="pagination">
       <ul>
       {% if page.previous %}
@@ -45,11 +43,9 @@
       {% endif %}
       </ul>
     </div>
-    </li>
-    <li>
+    <div style="float: right">
     {% include JB/sharing %}
-    </li>
-    </ul>
+    </div>
     <hr>
     {% include JB/comments %}
   </div>
