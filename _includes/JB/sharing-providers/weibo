@@ -3,10 +3,10 @@
     <iframe 
     width="100" 
     scrolling="no" 
-    height="80" 
+    height="40" 
     frameborder="0" 
     src=
-        "http://hits.sinajs.cn/A1/weiboshare.html?url={{ site.production_url }}/{{ page.permalink }}&amp;type=2&amp;{% if site.JB.sharing.weibo.uid %}ralateUid={{ site.JB.sharing.weibo.uid }}&amp;{% endif %}language=zh_cn" allowtransparency="true">
+        "http://hits.sinajs.cn/A1/weiboshare.html?url={{ site.production_url }}{{ post.url }}&amp;type=5&amp;{% if site.JB.sharing.weibo.uid %}ralateUid={{ site.JB.sharing.weibo.uid }}&amp;{% endif %}language=zh_cn" allowtransparency="true">
     </iframe>
     </span>
 </div>
