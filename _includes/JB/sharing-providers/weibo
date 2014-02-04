@@ -1,12 +1,12 @@
 <div class="sharing">
     <span>
     <iframe 
-    width="100" 
+    width="150" 
     scrolling="no" 
-    height="32" 
+    height="16" 
     frameborder="0" 
     src=
-        "http://hits.sinajs.cn/A1/weiboshare.html?url={{ BASE_PATH }}{{ post.url }}&amp;type=5&amp;{% if site.JB.sharing.weibo.uid %}ralateUid={{ site.JB.sharing.weibo.uid }}&amp;{% endif %}language=zh_cn" allowtransparency="true">
+        "http://hits.sinajs.cn/A1/weiboshare.html?url={{ site.url }}{{ page.url }}&amp;type=5&amp;{% if site.JB.sharing.weibo.uid %}ralateUid={{ site.JB.sharing.weibo.uid }}&amp;{% endif %}language=zh_cn" allowtransparency="true">
     </iframe>
     </span>
 </div>
