@@ -1,9 +1,9 @@
 <div class="sharing">
     <span>
     <iframe 
-    width="111" 
+    width="110" 
     scrolling="no" 
-    height="24" 
+    height="21" 
     frameborder="0" 
     src=
         "http://hits.sinajs.cn/A1/weiboshare.html?url={{ site.production_url }}{{ page.url }}&amp;type=5&amp;title={{ page.title }}&amp;{% if site.JB.sharing.weibo.uid %}ralateUid={{ site.JB.sharing.weibo.uid }}&amp;{% endif %}language=zh_cn" allowtransparency="true">
