@@ -3,8 +3,8 @@
 {% case site.JB.comments.provider %}
 {% when "disqus" %}
   {% include JB/comments-providers/disqus %}
-{% when "livefyre" %}
-  {% include JB/comments-providers/livefyre %}
+{% when "weibo" %}
+  {% include JB/comments-providers/weibo %}
 {% when "intensedebate" %}
   {% include JB/comments-providers/intensedebate %}
 {% when "facebook" %}
