@@ -143,7 +143,7 @@ Git安装只需按照提示默认点击下一步，在“Configuring the line en
 在文件``source/_includes/post/sharing.html``中加入代码，效果如下nimeia !
 
     <div class="sharing">
-      ``\{% if site.weibo_share %\}``
+      \{% if site.weibo_share %\}
       <span>
       <iframe 
         width="86" 
@@ -154,10 +154,10 @@ Git安装只需按照提示默认点击下一步，在“Configuring the line en
           "http://hits.sinajs.cn/A1/weiboshare.html?url={{ site.url }}{{ page.url }}&amp;type=6&amp;{% if site.weibo_uid %}ralateUid={{ site.weibo_uid }}&amp;{% endif %}language=zh_cn" allowtransparency="true">
       </iframe>
       </span>
-      {% endif %}
-      {% if site.twitter_tweet_button %}
+      \{% endif %\}
+      \{% if site.twitter_tweet_button %\}
       <a href="http://twitter.com/share" class="twitter-share-button" data-url="{{ site.url }}{{ page.url }}" data-via="{{ site.twitter_user }}" data-counturl="{{ site.url }}{{ page.url }}" >Tweet</a>
-      {% endif %}
+      \{% endif %\}
       {% if site.google_plus_one %}
       <div class="g-plusone" data-size="{{ site.google_plus_one_size }}"></div>
       {% endif %}
