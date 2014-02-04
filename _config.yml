@@ -107,7 +107,18 @@ JB :
   #
   sharing :
     provider : false
-    
+  
+# Weibo
+# Please refer to http://weibo.com/tool/weiboshow to get your uid and verifier.
+weibo_uid: 1765226582
+weibo_verifier: 40be62c3
+weibo_fansline: 0   # How many lines for the fan list
+weibo_show: true    # Whether you want your weibo content to be shown
+weibo_pic: true     # Whether you want the pictures in weibo to be shown
+weibo_skin: 10      # Please refer to http://weibo.com/tool/weiboshow
+weibo_share: false   # Whether show the sharing button
+
+  
   # Settings for all other include helpers can be defined by creating 
   # a hash with key named for the given helper. ex:
   #
