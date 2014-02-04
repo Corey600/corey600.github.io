@@ -94,9 +94,9 @@ JB :
       verifier: 40be62c3
       fansline: 0   # How many lines for the fan list
       show: true    # Whether you want your weibo content to be shown
-      pic: true     # Whether you want the pictures in weibo to be shown
-      skin: 10      # Please refer to http://weibo.com/tool/weiboshow
-      share: false   # Whether show the sharing button
+      pic: false     # Whether you want the pictures in weibo to be shown
+      skin: 5     # Please refer to http://weibo.com/tool/weiboshow
+      share: ture   # Whether show the sharing button
 
 
   # Settings for all other include helpers can be defined by creating 
