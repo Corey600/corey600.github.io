@@ -166,6 +166,10 @@ Git安装只需按照提示默认点击下一步，在“Configuring the line en
       {% endif %}
     </div>
 
+如果代码显示不完全，查看如下截图
+
+![Alt text](/images/20130228/dm.jpg)
+
 然后在博客根目录下的配置文件``_config.yml``文件中加入代码
 
     # Weibo
