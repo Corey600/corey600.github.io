@@ -9,7 +9,8 @@ tags : [linux, dnw, ubuntu, TQ2440]
 首先我们安装kermit，我们可以使用``#sudo apt-get install ckermit``来安装kermit。
 
 下载完成之后还要对其进行配置。``#sudo vim /etc/kermit/kermrc``
-{% img /resources/20120922/1.jpg 1000 %}
+
+![Alt text](/images/20120922/1.jpg)
 
 set line /dev/ttyUSB0 (这里填写通过命令#dmesg看到的设备名。上图中红线部分。attached to ttyUSB0 说明已经附加到了ttyUSB0这个设备上了。)
 
@@ -34,7 +35,8 @@ set line /dev/ttyUSB0 (这里填写通过命令#dmesg看到的设备名。上图
     set window 5
 
 配置完以后的样子
-{% img /resources/20120922/2.jpg 1000 %}
+
+![Alt text](/images/20120922/2.jpg)
 
 红色方框内的内容为添加内容。
 
@@ -45,7 +47,8 @@ set line /dev/ttyUSB0 (这里填写通过命令#dmesg看到的设备名。上图
 就可以使用串口了。
 
 切换：按下Ctrl + \ ,再按c 就跳回kermit。跳回串口控制，可以输入c,即connect命令。
-{% img /resources/20120922/3.jpg 1000 %}
+
+![Alt text](/images/20120922/3.jpg)
 
 上图是使用kermit连接开发板。
 
