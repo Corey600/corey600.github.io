@@ -52,7 +52,7 @@ set line /dev/ttyUSB0 (这里填写通过命令#dmesg看到的设备名。上图
 
 上图是使用kermit连接开发板。
 
-接着说一下dnw2的使用。先把以下代码保存成文件 dnw2.c
+接着说一下dnw2的使用。先把以下某大神写的代码保存成文件 dnw2.c
 
     #include <stdio.h>
     #include <usb.h>
@@ -198,6 +198,6 @@ PC 链接 TQ2440开发板，在终端里面运行 ``#sudo kermit``  ，然后con
 
 等待下载完毕。
 
-参看链接：      
+参考链接：      
 [linux环境下安装dnw（for mini2440）](http://tanglz2005.blog.163.com/blog/static/8569819620122213535490/)     
 [mini2440 在 ubuntu12.04 下 minicom 串口 dnw2 实验成功](http://hi.baidu.com/lv0xian/item/dd7e26321316b880c2cf29a5)
