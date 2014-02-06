@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Vim Tab使用技巧
+title: Vim的Tab使用技巧
 category : 转载
 tagline: "转载"
 tags : [Vim]

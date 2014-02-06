@@ -1,9 +1,9 @@
 ---
 layout: post
-title: linux下用dnw烧写bin镜像(ubuntu for TQ2440)
+title: Linux下用Dnw烧写bin镜像(Ubuntu for TQ2440)
 category : 备忘
 tagline: "备忘"
-tags : [Linux, Dnw, Ubuntu, TQ2440]
+tags : [Linux, Ubuntu, TQ2440]
 ---
 我们要用到的工具是C-kermit 和 dnw2。其中C-kermit是串口连接程序。而dnw2是用来向开发板下载程序的。
 首先我们安装kermit，我们可以使用``#sudo apt-get install ckermit``来安装kermit。

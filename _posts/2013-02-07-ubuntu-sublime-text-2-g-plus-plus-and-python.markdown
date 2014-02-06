@@ -1,6 +1,6 @@
 ---
 layout: post
-title: ubuntu下sublime text 2的g++和python配置
+title: Ubuntu下SublimeText2的G++和Python配置
 category : 备忘
 tagline: "备忘"
 tags : [Ubuntu, SublimeText2, G++, Python]

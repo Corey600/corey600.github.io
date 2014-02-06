@@ -1,11 +1,11 @@
 ---
 layout: post
-title: 基于TQ2440上linux-2.6.32.59的LCD驱动移植
+title: 基于TQ2440上Linux-2.6.32.59的LCD驱动移植
 category : 备忘
 tagline: "备忘"
 tags : [TQ2440, Linux, LCD]
 ---
-##1.简化LCD时钟计算方法：
+###1.简化LCD时钟计算方法：
 修改``drivers/video/s3c2440fb.c``文件365行左右的函数``static void s3c2410fb_activate_var(struct fb_info *info)``如下：
 
 	static void s3c2410fb_activate_var(struct fb_info *info)
@@ -90,7 +90,7 @@ tags : [TQ2440, Linux, LCD]
 		unsigned long lcdcon5;
 	};
 
-##2.添加多种LCD支持：
+###2.添加多种LCD支持：
 修改``arch/arm/mach-s3c2440/mach-smdk2440.c``文件107行左右的结构体``s3c2410fb_display smdk2440_lcd_cfg __initdata``如下：
 
 	static struct s3c2410fb_display smdk2440_lcd_cfg __initdata = {
