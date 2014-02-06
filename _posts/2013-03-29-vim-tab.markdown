@@ -1,8 +1,8 @@
 ---
 layout: post
-title: [转]Vim Tab使用技巧
+title: Vim Tab使用技巧
 category : lessons
-tagline: "备忘"
+tagline: "转载"
 tags : [Vim]
 ---
 1. 设定 tab 的位置        

@@ -1,8 +1,8 @@
 ---
 layout: post
-title: [转]字符串匹配的Boyer-Moore算法
+title: 字符串匹配的Boyer-Moore算法
 category : lessons
-tagline: "备忘"
+tagline: "转载"
 tags : [字符串, Boyer-Moore]
 ---
 原作者：[阮一峰](http://www.ruanyifeng.com/blog/2013/05/boyer-moore_string_search_algorithm.html)
