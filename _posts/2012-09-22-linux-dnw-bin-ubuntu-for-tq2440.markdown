@@ -46,13 +46,13 @@ set line /dev/ttyUSB0 (这里填写通过命令#dmesg看到的设备名。上图
 
 就可以使用串口了。
 
-切换：按下Ctrl + \ ,再按c 就跳回kermit。跳回串口控制，可以输入c,即connect命令。
+切换：按下Ctrl+\ ,再按c 就跳回kermit。跳回串口控制，可以输入c,即connect命令。
 
 ![Alt text](/images/20120922/3.jpg)
 
 上图是使用kermit连接开发板。
 
-接着说一下dnw2的使用。先把以下某大神写的代码保存成文件 dnw2.c
+接着说一下dnw2的使用。先把以下某大神写的代码保存成文件dnw2.c
 
     #include <stdio.h>
     #include <usb.h>
@@ -180,7 +180,7 @@ set line /dev/ttyUSB0 (这里填写通过命令#dmesg看到的设备名。上图
         return 0;
     }
 
-然后安装  libusb 库``#sudo apt-get install libusb-dev``
+然后安装 libusb 库``#sudo apt-get install libusb-dev``
 
 编译 dnw2.c 文件``#gcc dnw2.c -o dnw2 -lusb``
 
