@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 完善TQ2440上linux-2.6.32.59的串口驱动
-category : lessons
+category : 备忘
 tagline: "备忘"
 tags : [TQ2440, Linux, 串口]
 ---

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: linux下用dnw烧写bin镜像(ubuntu for TQ2440)
-category : lessons
+category : 备忘
 tagline: "备忘"
 tags : [Linux, Dnw, Ubuntu, TQ2440]
 ---

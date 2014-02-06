@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 基于TQ2440上linux-2.6.32.59的LCD驱动移植
-category : lessons
+category : 备忘
 tagline: "备忘"
 tags : [TQ2440, Linux, LCD]
 ---

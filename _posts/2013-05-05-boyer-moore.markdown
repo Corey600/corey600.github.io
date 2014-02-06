@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 字符串匹配的Boyer-Moore算法
-category : lessons
+category : 转载
 tagline: "转载"
 tags : [字符串, Boyer-Moore]
 ---

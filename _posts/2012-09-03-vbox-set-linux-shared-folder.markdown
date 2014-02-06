@@ -1,7 +1,7 @@
 ---
 layout: post
 title: VBox中设置Linux的共享文件夹
-category : lessons
+category : 备忘
 tagline: "备忘"
 tags : [Linux, VBox]
 ---

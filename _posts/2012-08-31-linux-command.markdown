@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Linux命令行总汇(20120922更新)
-category : lessons
+category : 备忘
 tagline: "备忘"
 tags : [Linux]
 ---

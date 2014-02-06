@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Win7下Jekyll折腾笔记
-category : lessons
+category : 备忘
 tagline: "备忘"
 tags : [Jekyll, Win7]
 ---
