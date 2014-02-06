@@ -3,7 +3,7 @@ layout: post
 title: VBox中设置Linux的共享文件夹
 category : lessons
 tagline: "备忘"
-tags : [linux, VBox]
+tags : [Linux, VBox]
 ---
 1.首先在Vbox的菜单选项中控制=>设置=>共享文件夹中分配一个共享文件夹在主机下的路径，我在WIin8下的路径是``E:\Program Files\Oracle\shared``，设置了共享文件夹名称为shared，这个名称在Linux中挂载时输入命令时用到。
 

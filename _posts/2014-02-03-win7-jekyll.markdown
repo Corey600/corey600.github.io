@@ -3,7 +3,7 @@ layout: post
 title: Win7下Jekyll折腾笔记
 category : lessons
 tagline: "备忘"
-tags : [jekyll, win7]
+tags : [Jekyll, Win7]
 ---
 * ###_安装RubyInstaller和DevKit_
 

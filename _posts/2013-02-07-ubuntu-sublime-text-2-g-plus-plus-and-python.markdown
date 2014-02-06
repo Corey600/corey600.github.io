@@ -3,7 +3,7 @@ layout: post
 title: ubuntu下sublime text 2的g++和python配置
 category : lessons
 tagline: "备忘"
-tags : [ubuntu, sublimetext2, g++, python]
+tags : [Ubuntu, SublimeText2, G++, Python]
 ---
 如果原本系统已经安装了g++和python2.7，并且配置好了环境变量，那么sublime本身默认的配置文件已经能够满足要求了。但是对于我这个用惯了codeblock的人来说，运行时不能在终端输入是无法忍受的。那么我就希望将sublime配置成codeblock那样跳出终端窗口来显示输出，并且能够输入。不多说，先贴出配置文件。
 

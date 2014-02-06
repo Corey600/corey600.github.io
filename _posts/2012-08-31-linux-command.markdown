@@ -3,7 +3,7 @@ layout: post
 title: Linux命令行总汇(20120922更新)
 category : lessons
 tagline: "备忘"
-tags : [linux]
+tags : [Linux]
 ---
 ##1.修改全局环境变量操作
 运行以下命令
