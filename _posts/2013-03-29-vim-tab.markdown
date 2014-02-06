@@ -21,11 +21,10 @@ tags : [Vim]
 6. 将 tab 显示为可见字符   
 ``:set list listchars=tab:>-``   
 tab 将被显示为 >—- 的形式
-7. 只在编辑特定类型的文件时展开 tab   
+7. 只在编辑特定类型的文件时展开tab   
 将如下代码加入 ~/.vimrc
-{% codeblock %}
-autocmd FileType * set tabstop=4|set shiftwidth=4|set noexpandtab
-autocmd FileType python set tabstop=4|set shiftwidth=4|set expandtab
-{% endcodeblock %}
+
+	autocmd FileType * set tabstop=4|set shiftwidth=4|set noexpandtab
+	autocmd FileType python set tabstop=4|set shiftwidth=4|set expandtab
 
 原文链接：[Vim Tab使用技巧](http://www.cnblogs.com/panliang188/archive/2010/04/20/1715836.html)
