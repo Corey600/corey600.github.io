@@ -1,17 +1,6 @@
 ---
-layout: page
-title: Home
-tagline: Here's posts list.
+# You don't need to edit this file, it's empty on purpose.
+# Edit theme's home layout instead if you wanna make some changes
+# See: https://jekyllrb.com/docs/themes/#overriding-theme-defaults
+layout: home
 ---
-{% include JB/setup %}
-
-<ul class="posts">
-  {% for post in site.posts %}
-    <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a></li>
-  {% endfor %}
-</ul>
-
---------------------
-
-Email: fcx600@163.com       
-Github: [Corey600 (Corey Fei)](https://github.com/Corey600)
