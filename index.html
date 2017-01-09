@@ -4,17 +4,20 @@ title: Home
 tagline: Here's posts list.
 ---
 
+<!--
 <ul class="posts">
   {% for post in site.posts %}
-    <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a></li>
+    <li>
+      <span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a>
+      <article class="excerpt">{{post.excerpt}}</article>
+      <a class="pull-right marginBottom10" href="{{post.url | prepend: site.baseurl }}">Read More</a>
+    </li>
   {% endfor %}
 </ul>
 
---------------------
-
 Email: fcx600@163.com       
 Github: [Corey600 (Corey Fei)](https://github.com/Corey600)
-
+-->
 
 <div class="container">
   <div class="row">

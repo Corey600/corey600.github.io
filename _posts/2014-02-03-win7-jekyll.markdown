@@ -9,8 +9,10 @@ tags : [Jekyll, Win7]
 
 进入DevKit安装目录运行如下命令
 
-    ruby dk.rb init
-    ruby dk.rb install
+{% highlight ruby %}
+ruby dk.rb init
+ruby dk.rb install
+{% endhighlight %}
 
 安装结果如下
 
