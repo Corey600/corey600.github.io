@@ -26,36 +26,10 @@ github_username:  corey600
 
 # Build settings
 markdown: kramdown
-theme: minima
+#theme: minima
+theme: jekyll-theme-modernist
 gems:
   - jekyll-feed
 exclude:
   - Gemfile
   - Gemfile.lock
-
-  
-#####
-# theme settings
-#####
-
-# Enable one of these styles by removing #. Style will be applied only after restarting the build or serve.
-#style: styles-2
-#style: styles-3
-#style: styles-4
-#style: styles-5
-#style: styles-6
-
-# Profile information
-name: Corey Fei
-tagline: JSer and Noder
-pic: profile.jpg  #place a 100x100 picture inside /assets/images/ folder and provide the name of the file below
-
-# sidebar links
-email: fcx600@163.com
-#phone: 012 345 6789
-website: corey600.github.io #do not add http://
-#linkedin: alandoe
-github: corey600
-#twitter: '@webjeda'
-
-#Update all the sections by editing the files inside _includes folder.  
