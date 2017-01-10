@@ -6,7 +6,8 @@ tagline: "备忘"
 tags : [Jekyll, Win7]
 excerpt_separator: <!--more-->
 ---
-* ### _安装RubyInstaller和DevKit_
+
+* #### _安装RubyInstaller和DevKit_
 
 进入DevKit安装目录运行如下命令
 
@@ -14,8 +15,6 @@ excerpt_separator: <!--more-->
 ruby dk.rb init
 ruby dk.rb install
 {% endhighlight %}
-
-<!--more-->
 
 安装结果如下
 
@@ -38,7 +37,9 @@ ruby dk.rb install
         
     E:/Programs/Ruby193
 
-* ###_安装效率更好的模版解释器_
+<!--more-->
+
+* #### _安装效率更好的模版解释器_
 
 默认的``Maruku``是纯ruby的Markdown模版解释器，而``RDiscount``则是c写的模版解释器，效率更好。可以参考如下别人做的对比
 
@@ -67,7 +68,7 @@ ruby dk.rb install
 
     markdown: rdiscount
 
-* ###_更换淘宝的源及安装Jekyll_
+* #### _更换淘宝的源及安装Jekyll_
 
 运行如下命令
 
@@ -84,7 +85,7 @@ ruby dk.rb install
 
 以上安装最好在取得Win7管理员权限的情况下进行。
 
-* ###_运行Jekyll_
+* #### _运行Jekyll_
 
 本地运行Jekyll命令如下
 

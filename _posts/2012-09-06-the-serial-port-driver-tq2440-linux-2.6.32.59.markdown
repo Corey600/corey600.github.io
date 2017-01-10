@@ -4,7 +4,9 @@ title: 完善TQ2440上Linux-2.6.32.59的串口驱动
 category : 备忘
 tagline: "备忘"
 tags : [TQ2440, Linux, 串口]
+excerpt_separator: <!--more-->
 ---
+
 修改内核源码``arch/arm/mach-s3c2440/mach-smdk2440.c``文件的100行，将其改为：
 
     .ulcon =0x03,
@@ -14,6 +16,8 @@ tags : [TQ2440, Linux, 串口]
     #include <mach/regs-gpio.h>
 
 然后在397行左右，函数``static int s3c24xx_serial_startup(struct uart_port *port)``之前添加
+
+<!--more-->
 
     extern void s3c2410_gpio_cfgpin(unsigned int pin, unsigned int function);
 

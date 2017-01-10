@@ -4,8 +4,11 @@ title: Linux命令行总汇(20120922更新)
 category : 备忘
 tagline: "备忘"
 tags : [Linux]
+excerpt_separator: <!--more-->
 ---
-###1.修改全局环境变量操作
+
+#### 1.修改全局环境变量操作
+
 运行以下命令
 
 	$ getdit /etc/profile
@@ -14,7 +17,7 @@ tags : [Linux]
 
 	$ source /etc/profile
 
-#####小技巧：
+##### 小技巧：
 其实如果打开``/etc/profile``，在最后我们可以发现有这样一段代码：
 
 	if [ -d /etc/profile.d ]; then
@@ -26,16 +29,19 @@ tags : [Linux]
 	  unset i
 	fi
 
+<!--more-->
+
 也就是说，在``/etc/profile``执行的最后，它会自动的执行``/etc/profile.d``目录下的所有可读的文件。这就是我们将设置__JDK__环境变量的工作放在``/etc/profile.d/development.sh``的原因，可以不用修改操作系统自带的``/etc/profile``内容，方便系统的移植。
-###2.察看环境变量操作
+
+#### 2.察看环境变量操作
 
 	$ echo $PATH
 
-###3.解决ubuntu 12.04下TXT乱码问题
+#### 3.解决ubuntu 12.04下TXT乱码问题
 
 	$ gsettings set org.gnome.gedit.preferences.encodings auto-detected "['UTF-8','GB18030','GB2312','GBK','BIG5','CURRENT','UTF-16']"
 
-###4.Ubuntu更改文件夹权限
+#### 4.Ubuntu更改文件夹权限
 
 	$ sudo chmod 600 ××× （只有所有者有读和写的权限）
 	$ sudo chmod 644 ××× （所有者有读和写的权限，组用户只有读的权限）
@@ -53,19 +59,19 @@ tags : [Linux]
 4 [100] 只读权限    
 6 [110] 读写权限    
 7 [111] 读写执行权限    
-###5.查看内核版本
+#### 5.查看内核版本
 
 	$ cat /proc/version
 
-###6.修改目录所有者
+#### 6.修改目录所有者
 
 	$ chown 用户名 文件名
 
-###7.删除非空目录
+#### 7.删除非空目录
 
 	$ rm -rf 目录名        ;其中参数-f表示force.
 
-###8.执行make menuconfig可能看到如下这样的错误
+#### 8.执行make menuconfig可能看到如下这样的错误
 
 	*** Unable to find the ncurses libraries or the
 	*** required header files.

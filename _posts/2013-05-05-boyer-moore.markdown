@@ -4,7 +4,9 @@ title: 字符串匹配的Boyer-Moore算法
 category : 转载
 tagline: "转载"
 tags : [字符串]
+excerpt_separator: <!--more-->
 ---
+
 阮一峰大神贴的感觉很不错的字符串算法，转载过来以备以后查看。
 
 原作者：[阮一峰](http://www.ruanyifeng.com/blog/2013/05/boyer-moore_string_search_algorithm.html)
@@ -14,6 +16,8 @@ tags : [字符串]
 上一篇文章，我介绍了KMP算法。但是，它并不是效率最高的算法，实际采用并不多。各种文本编辑器的"查找"功能（Ctrl+F），大多采用Boyer-Moore算法。
 
 Boyer-Moore算法不仅效率高，而且构思巧妙，容易理解。1977年，德克萨斯大学的Robert S. Boyer教授和J Strother Moore教授发明了这种算法。
+
+<!--more-->
 
 下面，我根据Moore教授自己的例子来解释这种算法。
 

@@ -4,7 +4,9 @@ title: Vim的Tab使用技巧
 category : 转载
 tagline: "转载"
 tags : [Vim]
+excerpt_separator: <!--more-->
 ---
+
 1. 设定 tab 的位置        
 ``:set tabstop=4``
 
@@ -14,6 +16,8 @@ tags : [Vim]
 
 3. 将已存在的 tab 都转化为空格   
 ``:retab``
+
+<!--more-->
 
 4. 设定编辑模式下 tab 的视在宽度   
 ``:set softtabstop``   

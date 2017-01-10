@@ -5,6 +5,7 @@ category : 备忘
 tagline: "备忘"
 tags : [Win7]
 ---
+
 由于寝室使用闪讯共享上网，时常需要手动修改IP，为了方便快速修改IP，查找资料写了如下的脚本。在Win7环境下将下面代码保存为ip.bat双击运行即可。
 
 	@echo off
