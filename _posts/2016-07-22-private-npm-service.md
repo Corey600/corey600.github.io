@@ -143,7 +143,7 @@ cnpmjs.org 默认只允许管理员用户 `publish` 模块至服务器。
 ```
 admins: {
     // name: email
-    feichenxi: 'feichenxi@hikvision.com.cn'
+    fcx: 'fcx600@163.com'
 },
 ```
 
@@ -166,7 +166,7 @@ bindingHost: '',
 
 ```
 // registry scopes, if don't set, means do not support scopes
-scopes: [ '@hik', '@hikvision', '@ezviz' ],
+scopes: [ '@scopes', '@scope' ],
 ```
 
 #### 5. 同步模式设置
