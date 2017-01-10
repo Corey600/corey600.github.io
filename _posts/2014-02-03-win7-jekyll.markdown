@@ -4,8 +4,9 @@ title: Win7下Jekyll折腾笔记
 category : 备忘
 tagline: "备忘"
 tags : [Jekyll, Win7]
+excerpt_separator: <!--more-->
 ---
-* ###_安装RubyInstaller和DevKit_
+* ### _安装RubyInstaller和DevKit_
 
 进入DevKit安装目录运行如下命令
 
@@ -13,6 +14,8 @@ tags : [Jekyll, Win7]
 ruby dk.rb init
 ruby dk.rb install
 {% endhighlight %}
+
+<!--more-->
 
 安装结果如下
 
