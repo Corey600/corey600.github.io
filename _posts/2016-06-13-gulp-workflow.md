@@ -102,7 +102,8 @@ gulp.task('less', ['image'], function () {
 gulp可以直接处理js脚本文件的压缩合并等工作，但在考虑js代码的模块化时，还要引入require.js或者seajs等模块加载器的对应插件。我们知道，webpack本身就是一个完备的前端构建工具，而且引入了一种新的模块化解决方案。这里我们将使用webpack的处理变成一个gulp任务，利用它的js模块化方案和打包压缩等功能，其他事情交给gulp来处理。
 
 在gulp中使用webpack，我们需要使用`webpack-stream`插件。它直接将`main`作为唯一的入口entry，但是我们的工程不是单页面的，这样显然不行。例如：
-```
+
+```javascript
 gulp.task('webpack', function () {
     return gulp.src([ 'public/pages/**/*.js' ])
         .pipe(webpackStream({
@@ -122,10 +123,12 @@ gulp.task('webpack', function () {
         .pipe(gulp.dest('dist'));
 });
 ```
+
 只生成了`dist`目录下的一个main.js文件。
 
 为了将`gulp.src`中的文件直接作为webpack的entry，我们又引入了`vinyl-named`插件，它可以使用回调函数将文件路径中的匹配部分作为entry中的name配置。例如：
-```
+
+```javascript
 gulp.task('webpack', function () {
     return gulp.src([
         'public/pages/**/*.js'
@@ -156,7 +159,9 @@ gulp.task('webpack', function () {
         .pipe(gulp.dest('dist'));
 });
 ```
+
 生成了如下四个文件：
+
 ```
 pages\safe_grade\index\index.js
 pages\safe_grade\user_info\user_info.js
@@ -168,7 +173,8 @@ webpack要实现代码的压缩等功能也需要使用到插件，这里使用�
 (1) 代码压缩
 
 使用时在plugins配置的列表中增加一项：
-```
+
+```javascript
 new webpack.optimize.UglifyJsPlugin({
     compress: {
         warnings: false
@@ -178,19 +184,22 @@ new webpack.optimize.UglifyJsPlugin({
     }
 }),
 ```
+
 其中mangle.except配置了在压缩过程中不被简化的变量，以防出现错误。
 参考资料：[http://webpack.github.io/docs/list-of-plugins.html#uglifyjsplugin](http://webpack.github.io/docs/list-of-plugins.html#uglifyjsplugin)
 
 (2) 公共代码提取
 
 使用时在plugins配置的列表中增加一项：
-```
+
+```javascript
 new webpack.optimize.CommonsChunkPlugin({
     name: 'common/js/common',
     filename: 'common/js/common.js',
     minChunks: 2
 })
 ```
+
 参考资料：[http://webpack.github.io/docs/list-of-plugins.html#commonschunkplugin](http://webpack.github.io/docs/list-of-plugins.html#commonschunkplugin)
 
 代码构建及压缩后不容易阅读和调试，webpack也支持增加source map。只需设置devtool选项为'source-map'。当然，它还支持其他很多模式，具体可参考：[webpack sourcemap 选项多种模式的一些解释](http://www.07net01.com/2016/01/1120167.html)
