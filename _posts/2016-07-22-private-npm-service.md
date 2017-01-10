@@ -3,12 +3,11 @@ layout: post
 title: 私有NPM服务搭建
 category : 备忘
 tagline: "备忘"
-tags : [前端,Fiddler]
+tags : [前端,npm,cnpm]
 excerpt_separator: <!--more-->
 ---
 
-##简介与背景
-----
+### 简介与背景
 
 由于官方的NPM库是完全开放的，任何人都可以浏览和下载，所以公司私有的、不便对外公开的node模块就没法上传和下载，也无法使用NPM的版本管理功能。这就需要在公司内部建立私有的NPM服务。
 
@@ -28,8 +27,7 @@ cnpmjs.org 依赖环境如下，数据库只需要选择其中一种就可以：
 下文具体介绍安装部署过程，环境为 `CentOS 6.6` 。
 
 
-##MySQL服务安装与配置
-----
+### MySQL服务安装与配置
 
 这里选择较为熟悉的 MySQL 来作为数据库服务。使用yum安装名利如下：
 
@@ -94,8 +92,7 @@ MySQL 默认有一个 `root` 用户，密码为空，拥有全部操作权限，
 这里说明 `root` 用户创建的数据库对其他用户是不可见的，需要将该数据库的权限配置给其他用户才可以。这里直接使用 `root` 用户，不需要这一步。
 
 
-##cnpmjs.org 安装与配置
-----
+### cnpmjs.org 安装与配置
 
 首先需要到 github 地址 [https://github.com/cnpm/cnpmjs.org](https://github.com/cnpm/cnpmjs.org) 下载源码，可以选择直接打包下载，也可以使用 `git clone` 下来。
 
@@ -119,7 +116,7 @@ MySQL 默认有一个 `root` 用户，密码为空，拥有全部操作权限，
 
 需要修改的主要有如下几项。
 
-### 1. 数据库设置
+#### 1. 数据库设置
 
 ```
 database: {
@@ -139,7 +136,7 @@ database: {
 },
 ```
 
-### 2. 管理员设置
+#### 2. 管理员设置
 
 cnpmjs.org 默认只允许管理员用户 `publish` 模块至服务器。
 
@@ -150,7 +147,7 @@ admins: {
 },
 ```
 
-### 3. 允许启动的地址
+#### 3. 允许启动的地址
 
 如果这一项配置为 `127.0.0.1` 则只允许本地访问 npm 服务
 
@@ -158,7 +155,7 @@ admins: {
 bindingHost: '',
 ```
 
-### 4. 作用域设置
+#### 4. 作用域设置
 
 作用域是 npm 2.0 版本以后引入的概念.
 
@@ -172,7 +169,7 @@ bindingHost: '',
 scopes: [ '@hik', '@hikvision', '@ezviz' ],
 ```
 
-### 5. 同步模式设置
+#### 5. 同步模式设置
 
 同步模式决定私有 npm 库和 官方 npm 库的同步机制，这里设置为 `none` 。我们没有必要全量同步官方库，下文会描述一般模块使用官方库或者 [https://registry.npm.taobao.org](https://registry.npm.taobao.org)， 而私有模块使用私有库的方法。
 
@@ -184,8 +181,7 @@ scopes: [ '@hik', '@hikvision', '@ezviz' ],
 syncModel: 'none', // 'none', 'all', 'exist'
 ```
 
-##启动服务
-----
+### 启动服务
 
 启动服务前还需要初始化数据库表。进入 cnpmjs.org 源码目录，登录 MySQL 数据库，运行如下命令：
 
@@ -211,8 +207,7 @@ mysql> source docs/db.sql
 # curl http://localhost:7002
 ```
 
-##cnpm客户端使用
-----
+### cnpm客户端使用
 
 使用npm安装cnpm模块：
 

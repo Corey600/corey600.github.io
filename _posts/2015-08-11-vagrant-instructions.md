@@ -264,7 +264,7 @@ $ sudo /etc/init.d/httpd status
 
 在浏览器输入服务器地址，看到带有类似 `Apache 2 Test Page` 的页面，就表示服务运行正常。
 
-![基本界面](/images/20150811/httpd.PNG)
+![基本界面](/images/20150811/httpd.png)
 
 - 安装php
 
@@ -288,7 +288,7 @@ $ sudo /etc/init.d/httpd restart
 
 在浏览器输入 `服务器地址/info.php`，看到带有php版本和配置信息的页面，就表示php环境运行正常。
 
-![基本界面](/images/20150811/php.PNG)
+![基本界面](/images/20150811/php.png)
 
 #### 部署fis的远程文件接收程序
 
@@ -333,7 +333,7 @@ if($_POST['to']){
 
 在浏览器输入 `服务器地址/receiver.php`，看到 `I'm ready for that, you know.`这样的文字，就表示接收程序已经准备就绪。
 
-![基本界面](/images/20150811/receiver.PNG)
+![基本界面](/images/20150811/receiver.png)
 
 #### 修改fis配置文件并构建部署
 

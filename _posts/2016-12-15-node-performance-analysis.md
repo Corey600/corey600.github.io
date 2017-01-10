@@ -80,18 +80,18 @@ Visit http://127.0.0.1:8080/?port=5858 to start debugging.
 
 (4) 使用浏览器打开地址`http://127.0.0.1:8080/?port=5858`，界面如下：
 
-![imge](essay/node-performance-analysis/node-inspector.png)
+![imge](/images/20161215/node-inspector.png)
 
 
 ##### 3.抓取内存使用堆栈信息
 
 在node-inpector的调试界面，选择`Profiles`选项卡，选择第三项`Record Heap Allocations`类型。其中，第一项是记录CPU运行信息，展示各个js函数运行的时间；第二项是记录内存堆快照；而第三项会记录一段时间内的内存堆信息。
 
-![imge](essay/node-performance-analysis/profiles.png)
+![imge](/images/20161215/profiles.png)
 
 点击start按钮，并使用http_load开启压力测试。运行一段时间之后，点一左上角的红色圆形按钮（运行结束后变为灰色）。捕获到的快照信息展示如下：
 
-![imge](essay/node-performance-analysis/snapshot.png)
+![imge](/images/20161215/snapshot.png)
 
 如上图，时间轴中每个时间点的柱状图表示当时申请的内存数量，其中蓝色的部分表示当前使用的内存，灰色的部分表示曾经使用，但后来被释放的内存。时间轴下面是各个对象对内存的占用情况。可以在最下方看到该对象的信息。
 

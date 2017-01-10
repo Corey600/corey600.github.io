@@ -3,20 +3,17 @@ layout: post
 title: 使用node开发dubbo远程调用客户端
 category : 备忘
 tagline: "备忘"
-tags : [前端,Fiddler]
+tags : [前端,node,dubbo]
 excerpt_separator: <!--more-->
 ---
 
-## 使用node开发dubbo远程调用客户端
-
 ### 简介
-----
 
 >DUBBO是一个分布式服务框架，致力于提供高性能和透明化的RPC远程服务调用方案，是阿里巴巴SOA服务化治理方案的核心框架，每天为2,000+个服务提供3,000,000,000+次访问量支持，并被广泛应用于阿里巴巴集团的各成员站点。
 
-###### 基本架构如下：
+#### 基本架构如下：
 
-![architecture](./essay/node-dubbo/dubbo-architecture.jpg)
+![architecture](/images/20160803/dubbo-architecture.jpg)
 
 其中 Monitor 和 Container 暂时略过不讲：
 
@@ -28,7 +25,7 @@ excerpt_separator: <!--more-->
 
 <!--more-->
 
-###### 调用关系说明
+#### 调用关系说明
 
 1. 服务提供者在启动时，向注册中心注册自己提供的服务。
 2. 服务消费者在启动时，向注册中心订阅自己所需的服务。
@@ -38,7 +35,6 @@ excerpt_separator: <!--more-->
 _参考链接_ : [dubbo架构](http://dubbo.io/User+Guide-zh.htm#UserGuide-zh-%E6%9E%B6%E6%9E%84)
 
 ### 部署dubbo环境
-----
 
 系统环境需要 jdk1.7，如果是 centos，默认安装的是 openJDK，需要卸载后重新安装 jdk1.7。
 
@@ -118,7 +114,6 @@ dubbo.admin.guest.password=guest
 访问 `http://127.0.0.1:8080/`: (用户:root,密码:root 或 用户:guest,密码:guest)
 
 ### 简单的提供者和消费者
-----
 
 #### 服务提供者
 
@@ -239,11 +234,10 @@ public class Consumer {
 _参考链接_ : [Dubbo实例](http://www.tuicool.com/articles/bYfIBfU)
 
 ### node客户端设计
-----
 
 #### 整体流程
 
-![dubbo](./essay/node-dubbo/dubbo.png)
+![dubbo](/images/20160803/dubbo.png)
 
 #### 编解码及序列化
 
@@ -272,7 +266,7 @@ _参考链接_ : [Dubbo实例](http://www.tuicool.com/articles/bYfIBfU)
 
 ###### 接收的传输协议格式
 
-![parse](./essay/node-dubbo/dubbo_protocol_header.jpg)
+![parse](/images/20160803/dubbo_protocol_header.jpg)
 
 其中 16-20位为序列化协议的类型ID，hessian2 的协议ID为 2，node客户端目前不支持其他的序列化协议。
 
@@ -302,8 +296,11 @@ RESPONSE_NULL_VALUE = 2; // 该方法没有返回值
 
 如果有，随后读取的就是具体的返回值数据，也符合 java 类型表示的方法。
 
+### 客户端实现源码
+
+[https://github.com/Corey600/zoodubbo](https://github.com/Corey600/zoodubbo)
+
 ### Todo List
-----
 
 1. 缓存服务列表，监听变化更新列表，不再每次都重新获取
 2. 使用连接池管理连接，添加负载均衡策略
