@@ -7,13 +7,13 @@ tags : [前端,Node,性能]
 excerpt_separator: <!--more-->
 ---
 
-#### 一、问题现象
+### 一、问题现象
 
 一个简单Node服务在500并发的压力下长期运行时会出现内存占用不断增长的问题。
 
-#### 二、分析过程及方法
+### 二、分析过程及方法
 
-##### 1.性能压测工具http_load
+#### 1.性能压测工具http_load
 
 [http_load](http://www.acme.com/software/http_load/) 是用来测试web服务器吞吐量和负载的测试工具。使用方法示例如下：
 
@@ -50,7 +50,7 @@ HTTP response codes:
 
 参考资料：[通过http_load来测试服务器的性能](https://my.oschina.net/chinacaptain/blog/309212)
 
-##### 2.使用node-inpector进行node程序debug
+#### 2.使用node-inpector进行node程序debug
 
 [node-inpector](https://www.npmjs.com/package/node-inspector) 是用于调试node应用程序的交互界面，类似chrome的开发者面板（Blink Developer Tools）。
 
@@ -83,7 +83,7 @@ Visit http://127.0.0.1:8080/?port=5858 to start debugging.
 ![imge](/images/20161215/node-inspector.png)
 
 
-##### 3.抓取内存使用堆栈信息
+#### 3.抓取内存使用堆栈信息
 
 在node-inpector的调试界面，选择`Profiles`选项卡，选择第三项`Record Heap Allocations`类型。其中，第一项是记录CPU运行信息，展示各个js函数运行的时间；第二项是记录内存堆快照；而第三项会记录一段时间内的内存堆信息。
 
@@ -99,7 +99,7 @@ Visit http://127.0.0.1:8080/?port=5858 to start debugging.
 
 分析方法可参考：[Chrome开发者工具之JavaScript内存分析](http://www.open-open.com/lib/view/open1421734578984.html)
 
-#### 三、问题原因及解决方式
+### 三、问题原因及解决方式
 
 问题原因：从内存堆栈分析，长期得不到释放的内存是和winston日志输出相关的。尝试关闭所有日志输出，内存果然不再增长。再多次尝试后发现其实是每次请求都要输出一条日志到本地磁盘，但是由于处理请求的并发数过大，磁盘IO来不及处理而堵塞，日志输出队列越堆越多，长期驻留内存。由于如果请求处理速率不变，磁盘IO一直处于来不及处理的状态，队列只能越来越长，内存就会不断增长。
 
