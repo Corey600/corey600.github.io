@@ -1,0 +1,125 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Corey's Blog</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Corey's Blog</h1><a id="logo" href="/.">Corey's Blog</a><p class="description"></p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title"><a href="/2014/02/03/win7-jekyll/">Win7下Jekyll折腾笔记</a></h1><div class="post-meta">2014-02-03</div><div class="post-content"><ul>
+<li><h4 id="安装RubyInstaller和DevKit"><a href="#安装RubyInstaller和DevKit" class="headerlink" title="安装RubyInstaller和DevKit"></a><em>安装RubyInstaller和DevKit</em></h4></li>
+</ul>
+<p>进入DevKit安装目录运行如下命令</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ruby dk.rb init</div><div class="line">ruby dk.rb install</div></pre></td></tr></table></figure>
+<p>安装结果如下</p>
+<pre><code>E:\Programs\DevKit&gt;ruby dk.rb init
+[INFO] found RubyInstaller v1.9.3 at E:/Programs/Ruby193
+
+Initialization complete! Please review and modify the auto-generated
+&apos;config.yml&apos; file to ensure it contains the root directories to all
+of the installed Rubies you want enhanced by the DevKit.
+
+E:\Programs\DevKit&gt;ruby dk.rb install
+[INFO] Updating convenience notice gem override for &apos;E:/Programs/Ruby193&apos;
+[INFO] Installing &apos;E:/Programs/Ruby193/lib/ruby/site_ruby/devkit.rb&apos;
+
+E:\Programs\DevKit&gt;ruby dk.rb review
+Based upon the settings in the &apos;config.yml&apos; file generated
+from running &apos;ruby dk.rb init&apos; and any of your customizations,
+DevKit functionality will be injected into the following Rubies
+when you run &apos;ruby dk.rb install&apos;.
+
+E:/Programs/Ruby193
+</code></pre></div><p class="readmore"><a href="/2014/02/03/win7-jekyll/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2013/05/05/boyer-moore/">字符串匹配的Boyer-Moore算法</a></h1><div class="post-meta">2013-05-05</div><div class="post-content"><p>阮一峰大神贴的感觉很不错的字符串算法，转载过来以备以后查看。</p>
+<p>原作者：<a href="http://www.ruanyifeng.com/blog/2013/05/boyer-moore_string_search_algorithm.html">阮一峰</a></p>
+<p><strong>正文如下：</strong></p>
+<p>上一篇文章，我介绍了KMP算法。但是，它并不是效率最高的算法，实际采用并不多。各种文本编辑器的”查找”功能（Ctrl+F），大多采用Boyer-Moore算法。</p>
+<p>Boyer-Moore算法不仅效率高，而且构思巧妙，容易理解。1977年，德克萨斯大学的Robert S. Boyer教授和J Strother Moore教授发明了这种算法。</p></div><p class="readmore"><a href="/2013/05/05/boyer-moore/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2013/04/02/change-ip/">Win7脚本快速修改IP</a></h1><div class="post-meta">2013-04-02</div><div class="post-content"><p>由于寝室使用闪讯共享上网，时常需要手动修改IP，为了方便快速修改IP，查找资料写了如下的脚本。在Win7环境下将下面代码保存为ip.bat双击运行即可。</p>
+<pre><code>@echo off
+cls 
+rem //设置变量，可以根据你的需要更改
+set Nic1=&quot;本地连接&quot; </div><p class="readmore"><a href="/2013/04/02/change-ip/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2013/03/29/vim-tab/">Vim的Tab使用技巧</a></h1><div class="post-meta">2013-03-29</div><div class="post-content"><ol>
+<li><p>设定 tab 的位置<br><code>:set tabstop=4</code></p>
+</li>
+<li><p>输入 tab 时自动将其转化为空格<br><code>:set expandtab</code><br>如果此时需要输入真正的 tab，则输入 Ctrl+V, tab，在 Windows 下是 Ctrl+Q, tab</p>
+</li>
+<li><p>将已存在的 tab 都转化为空格<br><code>:retab</code></p>
+</li>
+</ol></div><p class="readmore"><a href="/2013/03/29/vim-tab/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2013/02/28/use-github-and-octopress-create-blog/">用Github和Octopress搭建博客</a></h1><div class="post-meta">2013-02-28</div><div class="post-content"><p>最先玩过<a href="http://cheesefan.blog.163.com/">网易博客</a>,但是网易博客广告太多（虽然相比同类型的第三方托管博客广告要少很多，这也是最初选择它的原因），同时定制性太差，代码高亮也在部分主题下面也显示得不是太好。后来分别在<a href="http://sae.sina.com.cn/">新浪SAE</a>和<a href="http://developer.baidu.com/bae">百度BAE</a>上搭建过<a href="http://cn.wordpress.org/">WordPress</a>的博客，<a href="http://cn.wordpress.org/">WordPress</a>有丰富的主题插件资源，但正是由于它功能太过完善，显得它有点庞大，加载速度让我难以接受。</p>
+<p>后来得知<a href="https://github.com/">Github</a>提供有<a href="http://pages.github.com/">GitHub Pages</a>功能，可以搭建静态博客，然后尝试了一下确实满足了博主们的最大自由性，因为博客的所有源码都是由你管理可以随意修改的。当然，最重要的是<a href="https://github.com/">Github</a>免费与稳定性并存，有钱购买域名和空间的自然是选择商业的服务器空间更合适，但相对个人作为交流性的博客，<a href="http://pages.github.com/">GitHub Pages</a>已经足够了。</p></div><p class="readmore"><a href="/2013/02/28/use-github-and-octopress-create-blog/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2013/02/07/ubuntu-sublime-text-2-g-plus-plus-and-python/">Ubuntu下SublimeText2的G++和Python配置</a></h1><div class="post-meta">2013-02-07</div><div class="post-content"><p>如果原本系统已经安装了g++和python2.7，并且配置好了环境变量，那么sublime本身默认的配置文件已经能够满足要求了。但是对于我这个用惯了codeblock的人来说，运行时不能在终端输入是无法忍受的。那么我就希望将sublime配置成codeblock那样跳出终端窗口来显示输出，并且能够输入。不多说，先贴出配置文件。</p>
+<p>g++配置:</p>
+<pre><code>{
+    &quot;cmd&quot;: [&quot;g++&quot;, &quot;${file}&quot;, &quot;-o&quot;, &quot;${file_path}/${file_base_name}&quot;],
+    &quot;file_regex&quot;: &quot;^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$&quot;,
+    &quot;working_dir&quot;: &quot;${file_path}&quot;,
+    &quot;selector&quot;: &quot;source.c, source.c++&quot;,
+
+    &quot;variants&quot;:
+    [
+        {
+            &quot;name&quot;: &quot;Run&quot;,
+            &quot;cmd&quot;:[&quot;x-terminal-emulator&quot;, &quot;-x&quot;, &quot;bash&quot;, &quot;-c&quot;, &quot;g++ &apos;${file}&apos; -o &apos;${file_path}/${file_base_name}&apos; &amp;&amp; &apos;${file_path}/${file_base_name}&apos; ;read -n1 -p &apos;press any key to continue.&apos;&quot;]
+        }
+    ]
+}
+</code></pre></div><p class="readmore"><a href="/2013/02/07/ubuntu-sublime-text-2-g-plus-plus-and-python/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2012/09/22/linux-dnw-bin-ubuntu-for-tq2440/">Linux下用Dnw烧写bin镜像(Ubuntu for TQ2440)</a></h1><div class="post-meta">2012-09-22</div><div class="post-content"><p>我们要用到的工具是C-kermit 和 dnw2。其中C-kermit是串口连接程序。而dnw2是用来向开发板下载程序的。<br>首先我们安装kermit，我们可以使用<code>#sudo apt-get install ckermit</code>来安装kermit。</p>
+<p>下载完成之后还要对其进行配置。<code>#sudo vim /etc/kermit/kermrc</code></p>
+<p><img src="/images/20120922/1.jpg" alt="Alt text"></p></div><p class="readmore"><a href="/2012/09/22/linux-dnw-bin-ubuntu-for-tq2440/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2012/09/09/lcd-tq2440-linux-2.6.32.59/">基于TQ2440上Linux-2.6.32.59的LCD驱动移植</a></h1><div class="post-meta">2012-09-09</div><div class="post-content"><h4 id="1-简化LCD时钟计算方法："><a href="#1-简化LCD时钟计算方法：" class="headerlink" title="1.简化LCD时钟计算方法："></a>1.简化LCD时钟计算方法：</h4><p>修改<code>drivers/video/s3c2440fb.c</code>文件365行左右的函数<code>static void s3c2410fb_activate_var(struct fb_info *info)</code>如下：</p>
+<pre><code>static void s3c2410fb_activate_var(struct fb_info *info)
+{
+    struct s3c2410fb_info *fbi = info-&gt;par;
+    void __iomem *regs = fbi-&gt;io;
+    int type = fbi-&gt;regs.lcdcon1 &amp; S3C2410_LCDCON1_TFT;
+    struct fb_var_screeninfo *var = &amp;info-&gt;var;
+
+    //修改以下两行
+    struct s3c2410fb_mach_info *mach_info=fbi-&gt;dev-&gt;platform_data;
+    struct s3c2410fb_display *default_display=mach_info-&gt;displays+mach_info-&gt;default_display;
+
+    int clkdiv;
+
+    clkdiv = DIV_ROUND_UP(s3c2410fb_calc_pixclk(fbi, var-&gt;pixclock), 2);
+
+    dprintk(&quot;%s: var-&gt;xres  = %d\n&quot;, __func__, var-&gt;xres);
+    dprintk(&quot;%s: var-&gt;yres  = %d\n&quot;, __func__, var-&gt;yres);
+    dprintk(&quot;%s: var-&gt;bpp   = %d\n&quot;, __func__, var-&gt;bits_per_pixel);
+
+    if (type == S3C2410_LCDCON1_TFT) {
+        s3c2410fb_calculate_tft_lcd_regs(info, &amp;fbi-&gt;regs);
+        --clkdiv;
+        if (clkdiv &lt; 0)
+            clkdiv = 0;
+    } else {
+        s3c2410fb_calculate_stn_lcd_regs(info, &amp;fbi-&gt;regs);
+        if (clkdiv &lt; 2)
+            clkdiv = 2;
+    }
+
+    //此处修改如下
+    //fbi-&gt;regs.lcdcon1 |=  S3C2410_LCDCON1_CLKVAL(clkdiv);
+    fbi-&gt;regs.lcdcon1 |=  S3C2410_LCDCON1_CLKVAL(default_display-&gt;setclkval);
+
+
+    dprintk(&quot;new register set:\n&quot;);
+    dprintk(&quot;lcdcon[1] = 0x%08lx\n&quot;, fbi-&gt;regs.lcdcon1);
+    dprintk(&quot;lcdcon[2] = 0x%08lx\n&quot;, fbi-&gt;regs.lcdcon2);
+    dprintk(&quot;lcdcon[3] = 0x%08lx\n&quot;, fbi-&gt;regs.lcdcon3);
+    dprintk(&quot;lcdcon[4] = 0x%08lx\n&quot;, fbi-&gt;regs.lcdcon4);
+    dprintk(&quot;lcdcon[5] = 0x%08lx\n&quot;, fbi-&gt;regs.lcdcon5);
+
+    writel(fbi-&gt;regs.lcdcon1 &amp; ~S3C2410_LCDCON1_ENVID,
+    regs + S3C2410_LCDCON1);
+    writel(fbi-&gt;regs.lcdcon2, regs + S3C2410_LCDCON2);
+    writel(fbi-&gt;regs.lcdcon3, regs + S3C2410_LCDCON3);
+    writel(fbi-&gt;regs.lcdcon4, regs + S3C2410_LCDCON4);
+    writel(fbi-&gt;regs.lcdcon5, regs + S3C2410_LCDCON5);
+
+    s3c2410fb_set_lcdaddr(info);
+
+    fbi-&gt;regs.lcdcon1 |= S3C2410_LCDCON1_ENVID,
+    writel(fbi-&gt;regs.lcdcon1, regs + S3C2410_LCDCON1);
+}
+</code></pre></div><p class="readmore"><a href="/2012/09/09/lcd-tq2440-linux-2.6.32.59/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2012/09/06/the-serial-port-driver-tq2440-linux-2.6.32.59/">完善TQ2440上Linux-2.6.32.59的串口驱动</a></h1><div class="post-meta">2012-09-06</div><div class="post-content"><p>修改内核源码<code>arch/arm/mach-s3c2440/mach-smdk2440.c</code>文件的100行，将其改为：</p>
+<pre><code>.ulcon =0x03,
+</code></pre><p>修改<code>drivers/serial/samsung.c</code>文件的53行添加如下内容：</p>
+<pre><code>#include &lt;mach/regs-gpio.h&gt;
+</code></pre><p>然后在397行左右，函数<code>static int s3c24xx_serial_startup(struct uart_port *port)</code>之前添加</p></div><p class="readmore"><a href="/2012/09/06/the-serial-port-driver-tq2440-linux-2.6.32.59/">阅读更多</a></p></div><div class="post"><h1 class="post-title"><a href="/2012/09/03/vbox-set-linux-shared-folder/">VBox中设置Linux的共享文件夹</a></h1><div class="post-meta">2012-09-03</div><div class="post-content"><p>1.首先在Vbox的菜单选项中控制=&gt;设置=&gt;共享文件夹中分配一个共享文件夹在主机下的路径，我在WIin8下的路径是<code>E:\Program Files\Oracle\shared</code>，设置了共享文件夹名称为shared，这个名称在Linux中挂载时输入命令时用到。</p>
+<p><img src="/images/20120903/1.jpg" alt="Alt text"></p></div><p class="readmore"><a href="/2012/09/03/vbox-set-linux-shared-folder/">阅读更多</a></p></div><nav class="page-navigator"><a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">下一页</a></nav></div></div><div class="pure-u-1 pure-u-md-1-4"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/备忘/">备忘</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/总结/">总结</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/转载/">转载</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/12/15/node-performance-analysis/">由一个简单Node服务引申的Node性能分析方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/28/koa-and-co/">koa和co的简单分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/03/node-dubbo/">使用node开发dubbo远程调用客户端</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/22/private-npm-service/">私有NPM服务搭建</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/13/gulp-workflow/">gulp前端构建工作流</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/01/04/flash-player/">Flash播放器研究</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/08/11/vagrant-instructions/">使用vagrant虚拟机开发调试</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/07/07/js-class-inheritance/">JS的类和继承的实现方法比较</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/06/16/fiddler-instructions/">Fiddler使用说明</a></li><li class="post-list-item"><a class="post-list-link" href="/2014/09/18/mktime-daylight/">标准库函数mktime与夏令时</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/夏令时/" style="font-size: 15px;">夏令时</a> <a href="/tags/ACM/" style="font-size: 15px;">ACM</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/串口/" style="font-size: 15px;">串口</a> <a href="/tags/VBox/" style="font-size: 15px;">VBox</a> <a href="/tags/LCD/" style="font-size: 15px;">LCD</a> <a href="/tags/Vim/" style="font-size: 15px;">Vim</a> <a href="/tags/Ubuntu/" style="font-size: 15px;">Ubuntu</a> <a href="/tags/SublimeText2/" style="font-size: 15px;">SublimeText2</a> <a href="/tags/G/" style="font-size: 15px;">G++</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Github/" style="font-size: 15px;">Github</a> <a href="/tags/Octopress/" style="font-size: 15px;">Octopress</a> <a href="/tags/Win7/" style="font-size: 15px;">Win7</a> <a href="/tags/字符串/" style="font-size: 15px;">字符串</a> <a href="/tags/Jekyll/" style="font-size: 15px;">Jekyll</a> <a href="/tags/前端/" style="font-size: 15px;">前端</a> <a href="/tags/Fiddler/" style="font-size: 15px;">Fiddler</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/TQ2440/" style="font-size: 15px;">TQ2440</a> <a href="/tags/flash/" style="font-size: 15px;">flash</a> <a href="/tags/播放器/" style="font-size: 15px;">播放器</a> <a href="/tags/vagrant/" style="font-size: 15px;">vagrant</a> <a href="/tags/nfs/" style="font-size: 15px;">nfs</a> <a href="/tags/fis/" style="font-size: 15px;">fis</a> <a href="/tags/javascript/" style="font-size: 15px;">javascript</a> <a href="/tags/类/" style="font-size: 15px;">类</a> <a href="/tags/继承/" style="font-size: 15px;">继承</a> <a href="/tags/npm/" style="font-size: 15px;">npm</a> <a href="/tags/cnpm/" style="font-size: 15px;">cnpm</a> <a href="/tags/gulp/" style="font-size: 15px;">gulp</a> <a href="/tags/webpack/" style="font-size: 15px;">webpack</a> <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/co/" style="font-size: 15px;">co</a> <a href="/tags/node/" style="font-size: 15px;">node</a> <a href="/tags/dubbo/" style="font-size: 15px;">dubbo</a> <a href="/tags/Node/" style="font-size: 15px;">Node</a> <a href="/tags/性能/" style="font-size: 15px;">性能</a></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">© <a href="/." rel="nofollow">Corey's Blog.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.css?v=0.0.0"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

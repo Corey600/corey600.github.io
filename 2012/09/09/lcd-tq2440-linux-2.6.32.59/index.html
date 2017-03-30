@@ -1,0 +1,342 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>基于TQ2440上Linux-2.6.32.59的LCD驱动移植 | Corey's Blog</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">基于TQ2440上Linux-2.6.32.59的LCD驱动移植</h1><a id="logo" href="/.">Corey's Blog</a><p class="description"></p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">基于TQ2440上Linux-2.6.32.59的LCD驱动移植</h1><div class="post-meta">Sep 9, 2012<span> | </span><span class="category"><a href="/categories/备忘/">备忘</a></span></div><div class="clear"><div id="toc" class="toc-article"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-简化LCD时钟计算方法："><span class="toc-number">1.</span> <span class="toc-text">1.简化LCD时钟计算方法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-添加多种LCD支持："><span class="toc-number">2.</span> <span class="toc-text">2.添加多种LCD支持：</span></a></li></ol></div></div><div class="post-content"><h4 id="1-简化LCD时钟计算方法："><a href="#1-简化LCD时钟计算方法：" class="headerlink" title="1.简化LCD时钟计算方法："></a>1.简化LCD时钟计算方法：</h4><p>修改<code>drivers/video/s3c2440fb.c</code>文件365行左右的函数<code>static void s3c2410fb_activate_var(struct fb_info *info)</code>如下：</p>
+<pre><code>static void s3c2410fb_activate_var(struct fb_info *info)
+{
+    struct s3c2410fb_info *fbi = info-&gt;par;
+    void __iomem *regs = fbi-&gt;io;
+    int type = fbi-&gt;regs.lcdcon1 &amp; S3C2410_LCDCON1_TFT;
+    struct fb_var_screeninfo *var = &amp;info-&gt;var;
+
+    //修改以下两行
+    struct s3c2410fb_mach_info *mach_info=fbi-&gt;dev-&gt;platform_data;
+    struct s3c2410fb_display *default_display=mach_info-&gt;displays+mach_info-&gt;default_display;
+
+    int clkdiv;
+
+    clkdiv = DIV_ROUND_UP(s3c2410fb_calc_pixclk(fbi, var-&gt;pixclock), 2);
+
+    dprintk(&quot;%s: var-&gt;xres  = %d\n&quot;, __func__, var-&gt;xres);
+    dprintk(&quot;%s: var-&gt;yres  = %d\n&quot;, __func__, var-&gt;yres);
+    dprintk(&quot;%s: var-&gt;bpp   = %d\n&quot;, __func__, var-&gt;bits_per_pixel);
+
+    if (type == S3C2410_LCDCON1_TFT) {
+        s3c2410fb_calculate_tft_lcd_regs(info, &amp;fbi-&gt;regs);
+        --clkdiv;
+        if (clkdiv &lt; 0)
+            clkdiv = 0;
+    } else {
+        s3c2410fb_calculate_stn_lcd_regs(info, &amp;fbi-&gt;regs);
+        if (clkdiv &lt; 2)
+            clkdiv = 2;
+    }
+
+    //此处修改如下
+    //fbi-&gt;regs.lcdcon1 |=  S3C2410_LCDCON1_CLKVAL(clkdiv);
+    fbi-&gt;regs.lcdcon1 |=  S3C2410_LCDCON1_CLKVAL(default_display-&gt;setclkval);
+
+
+    dprintk(&quot;new register set:\n&quot;);
+    dprintk(&quot;lcdcon[1] = 0x%08lx\n&quot;, fbi-&gt;regs.lcdcon1);
+    dprintk(&quot;lcdcon[2] = 0x%08lx\n&quot;, fbi-&gt;regs.lcdcon2);
+    dprintk(&quot;lcdcon[3] = 0x%08lx\n&quot;, fbi-&gt;regs.lcdcon3);
+    dprintk(&quot;lcdcon[4] = 0x%08lx\n&quot;, fbi-&gt;regs.lcdcon4);
+    dprintk(&quot;lcdcon[5] = 0x%08lx\n&quot;, fbi-&gt;regs.lcdcon5);
+
+    writel(fbi-&gt;regs.lcdcon1 &amp; ~S3C2410_LCDCON1_ENVID,
+    regs + S3C2410_LCDCON1);
+    writel(fbi-&gt;regs.lcdcon2, regs + S3C2410_LCDCON2);
+    writel(fbi-&gt;regs.lcdcon3, regs + S3C2410_LCDCON3);
+    writel(fbi-&gt;regs.lcdcon4, regs + S3C2410_LCDCON4);
+    writel(fbi-&gt;regs.lcdcon5, regs + S3C2410_LCDCON5);
+
+    s3c2410fb_set_lcdaddr(info);
+
+    fbi-&gt;regs.lcdcon1 |= S3C2410_LCDCON1_ENVID,
+    writel(fbi-&gt;regs.lcdcon1, regs + S3C2410_LCDCON1);
+}
+</code></pre><a id="more"></a>
+<p>修改<code>arch/arm/mach-s3c2410/include/mach/fb.h</code>文件的40行左右的结构体<code>s3c2410fb_display</code>如下：</p>
+<pre><code>struct s3c2410fb_display {
+    unsigned type;
+
+    unsigned short width;
+    unsigned short height;
+
+    unsigned short xres;
+    unsigned short yres;
+    unsigned short bpp;
+
+    unsigned pixclock;
+
+    //修改下面一行
+    unsigned setclkval;
+
+    unsigned short left_margin;  
+    unsigned short right_margin;
+    unsigned short hsync_len;    
+    unsigned short upper_margin;
+    unsigned short lower_margin;
+    unsigned short vsync_len;
+
+    unsigned long lcdcon5;
+};
+</code></pre><h4 id="2-添加多种LCD支持："><a href="#2-添加多种LCD支持：" class="headerlink" title="2.添加多种LCD支持："></a>2.添加多种LCD支持：</h4><p>修改<code>arch/arm/mach-s3c2440/mach-smdk2440.c</code>文件107行左右的结构体<code>s3c2410fb_display smdk2440_lcd_cfg __initdata</code>如下：</p>
+<pre><code>static struct s3c2410fb_display smdk2440_lcd_cfg __initdata = {
+
+    .lcdcon5 = S3C2410_LCDCON5_FRM565 |
+     S3C2410_LCDCON5_INVVLINE |
+     S3C2410_LCDCON5_INVVFRAME |
+     S3C2410_LCDCON5_PWREN |
+     S3C2410_LCDCON5_HWSWP,
+
+    .type = S3C2410_LCDCON1_TFT,
+
+    //修改以下
+    #if defined(CONFIG_FB_S3C24X0_T240320)
+    .width = 240,
+    .height = 320,
+
+    .pixclock = 100000,
+    .setclkval = 0x4,
+    .xres = 240,
+    .yres = 320,
+    .bpp = 16,
+    .left_margin = 3,
+    .right_margin = 6,
+    .hsync_len = 1,
+    .upper_margin = 2,
+    .lower_margin = 1,
+    .vsync_len = 1,
+
+    #elif defined(CONFIG_FB_S3C24X0_S320240)
+    .width = 320,
+    .height = 240,
+
+    .pixclock = 80000,
+    .setclkval = 0x3,
+    .xres = 320,
+    .yres = 240,
+    .bpp = 16,
+    .left_margin = 15,
+    .right_margin = 5,
+    .hsync_len = 8,
+    .upper_margin = 5,
+    .lower_margin = 3,
+    .vsync_len = 15,
+
+    #elif defined(CONFIG_FB_S3C24X0_W320240)
+    .width = 320,
+    .height = 240,
+
+    .pixclock = 80000,
+    .setclkval = 0x3,
+    .xres = 320,
+    .yres = 240,
+    .bpp = 16,
+    .left_margin = 28,
+    .right_margin = 24,
+    .hsync_len = 42,
+    .upper_margin = 6,
+    .lower_margin = 2,
+    .vsync_len = 12,
+
+    #elif defined(CONFIG_FB_S3C24X0_LCD480272)
+    .width = 480,
+    .height = 272,
+
+    .pixclock = 40000,
+    .setclkval = 0x4,
+    .xres = 480,
+    .yres = 272,
+    .bpp = 16,
+    .left_margin = 19,
+    .right_margin = 10,
+    .hsync_len = 30,
+    .upper_margin = 4,
+    .lower_margin = 2,
+    .vsync_len = 8,
+
+    #elif defined(CONFIG_FB_S3C24X0_TFT640480)
+    .width = 640,
+    .height = 480,
+
+    .pixclock = 40000,
+    .setclkval = 0x1,
+    .xres = 640,
+    .yres = 480,
+    .bpp = 16,
+    .left_margin = 40,
+    .right_margin = 67,
+    .hsync_len = 31,
+    .upper_margin = 5,
+    .lower_margin = 25,
+    .vsync_len = 1,
+
+    #elif defined(CONFIG_FB_S3C24X0_TFT800480)
+    .width = 800,
+    .height = 480,
+
+    .pixclock = 40000,
+    .setclkval = 0x1,
+    .xres = 800,
+    .yres = 480,
+    .bpp = 16,
+    .left_margin = 15,
+    .right_margin = 47,
+    .hsync_len = 95,
+    .upper_margin = 9,
+    .lower_margin = 5,
+    .vsync_len = 1,
+
+    #elif defined(CONFIG_FB_S3C24X0_TFT800600)
+    .width = 800,
+    .height = 600,
+
+    .pixclock = 40000,
+    .setclkval = 0x1,
+    .xres = 800,
+    .yres = 600,
+    .bpp = 16,
+    .left_margin = 15,
+    .right_margin = 47,
+    .hsync_len = 95,
+    .upper_margin = 9,
+    .lower_margin = 5,
+    .vsync_len = 1,
+
+    #endif
+};
+</code></pre><p>修改同一文件235行左右的结构体<code>s3c2410fb_mach_info smdk2440_fb_info __initdata</code>如下：</p>
+<pre><code>static struct s3c2410fb_mach_info smdk2440_fb_info __initdata = {
+    .displays = &amp;smdk2440_lcd_cfg,
+    .num_displays = 1,
+    .default_display = 0,
+
+    #if 0
+    .gpccon = 0xaa940659,
+    .gpccon_mask = 0xffffffff,
+    .gpcup = 0x0000ffff,
+    .gpcup_mask = 0xffffffff,
+    .gpdcon = 0xaa84aaa0,
+    .gpdcon_mask = 0xffffffff,
+    .gpdup = 0x0000faff,
+    .gpdup_mask = 0xffffffff,
+    #endif
+
+    //注释掉下面一行
+    // .lpcsel = ((0xCE6) &amp; ~7) | 1&lt;&lt;4,
+};
+</code></pre><p>修改<code>drivers/video/Kconfig</code>文件1907到1986行左右如下：</p>
+<pre><code># 修改下面两行
+config FB_S3C24X0
+tristate &quot;S3C24X0 LCD framebuffer support&quot;
+
+depends on FB &amp;&amp; ARCH_S3C2410
+select FB_CFB_FILLRECT
+select FB_CFB_COPYAREA
+select FB_CFB_IMAGEBLIT
+---help---
+ Frame buffer driver for the built-in LCD controller in the Samsung
+ S3C2410 processor.
+
+ This driver is also available as a module ( = code which can be
+ inserted and removed from the running kernel whenever you want). The
+ module will be called s3c2410fb. If you want to compile it as a module,
+ say M here and read &lt;file:Documentation/kbuild/modules.txt&gt;.
+
+ If unsure, say N.
+
+# 修改以下
+choice
+prompt &quot;LCD select&quot;
+depends on FB_S3C24X0
+help
+  S3C24x0 LCD size select
+
+config FB_S3C24X0_S320240
+boolean &quot;3.5 inch 320x240 Samsung LCD&quot;
+depends on FB_S3C24X0
+help
+  3.5 inch 320x240 Samsung LCD
+
+config FB_S3C24X0_W320240
+boolean &quot;3.5 inch 320x240 WanXin or QiMei LCD&quot;
+depends on FB_S3C24X0
+help
+  3.5 inch 320x240 WanXin or QiMei LCD
+
+config FB_S3C24X0_T240320
+boolean &quot;3.5 inch 240X320 Toshiba LCD&quot;
+depends on FB_S3C24X0
+help
+  3.5 inch 240x320 Toshiba LCD
+
+config FB_S3C24X0_TFT480272
+boolean &quot;4.3 inch 480X272 TFT LCD&quot;
+depends on FB_S3C24X0
+help
+  4.3 inch 480X272 TFT LCD
+
+config FB_S3C24X0_TFT640480
+boolean &quot;VGA 640x480&quot;
+depends on FB_S3C24X0
+help
+  VGA 640x480
+
+config FB_S3C24X0_TFT800480
+boolean &quot;7 inch 800x480 LCD&quot;
+depends on FB_S3C24X0
+help
+  7 inch 800x480 LCD
+
+config FB_S3C24X0_TFT800600
+boolean &quot;10.4 inch 800x600 TFT LCD&quot;
+depends on FB_S3C24X0
+help
+  10.4 inch 800x480 TFT LCD
+
+config FB_S3C24X0_TFT1024768
+boolean &quot;VGA 1024x768&quot;
+depends on FB_S3C24X0
+help
+  VGA 1024x768 TFT LCD
+
+endchoice
+# 修改以上
+
+config FB_S3C2410_DEBUG
+bool &quot;S3C2410 lcd debug messages&quot;
+
+# 修改下面一行
+depends on FB_S3C24X0
+
+help
+ Turn on debugging messages. Note that you can set/unset at run time
+ through sysfs
+}
+</code></pre><p>修改<code>drivers/video/Makefile</code>文件116行左右如下：</p>
+<pre><code>obj-$(CONFIG_FB_MAXINE)  += maxinefb.o
+obj-$(CONFIG_FB_METRONOME)        += metronomefb.o
+obj-$(CONFIG_FB_BROADSHEET)       += broadsheetfb.o
+obj-$(CONFIG_FB_S1D13XXX)  += s1d13xxxfb.o
+obj-$(CONFIG_FB_SH7760)  += sh7760fb.o
+obj-$(CONFIG_FB_IMX)              += imxfb.o
+obj-$(CONFIG_FB_S3C)  += s3c-fb.o
+
+# 修改下面一行
+obj-$(CONFIG_FB_S3C24X0)  += s3c2410fb.o
+
+obj-$(CONFIG_FB_FSL_DIU)  += fsl-diu-fb.o
+obj-$(CONFIG_FB_COBALT)           += cobalt_lcdfb.o
+obj-$(CONFIG_FB_PNX4008_DUM)  += pnx4008/
+obj-$(CONFIG_FB_PNX4008_DUM_RGB)  += pnx4008/
+obj-$(CONFIG_FB_IBM_GXT4500)  += gxt4500.o
+obj-$(CONFIG_FB_PS3)  += ps3fb.o
+obj-$(CONFIG_FB_SM501)            += sm501fb.o
+obj-$(CONFIG_FB_XILINX)           += xilinxfb.o
+</code></pre></div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a data-url="https://corey600.github.io/2012/09/09/lcd-tq2440-linux-2.6.32.59/" data-id="cj0vrn649000bv0qd0q9tiwqj" class="article-share-link">分享到</a><div class="tags"><a href="/tags/TQ2440/">TQ2440</a><a href="/tags/Linux/">Linux</a><a href="/tags/LCD/">LCD</a></div><div class="post-nav"><a href="/2012/09/22/linux-dnw-bin-ubuntu-for-tq2440/" class="pre">Linux下用Dnw烧写bin镜像(Ubuntu for TQ2440)</a><a href="/2012/09/06/the-serial-port-driver-tq2440-linux-2.6.32.59/" class="next">完善TQ2440上Linux-2.6.32.59的串口驱动</a></div></div></div></div><div class="pure-u-1 pure-u-md-1-4"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/备忘/">备忘</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/总结/">总结</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/转载/">转载</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/12/15/node-performance-analysis/">由一个简单Node服务引申的Node性能分析方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/28/koa-and-co/">koa和co的简单分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/03/node-dubbo/">使用node开发dubbo远程调用客户端</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/22/private-npm-service/">私有NPM服务搭建</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/13/gulp-workflow/">gulp前端构建工作流</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/01/04/flash-player/">Flash播放器研究</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/08/11/vagrant-instructions/">使用vagrant虚拟机开发调试</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/07/07/js-class-inheritance/">JS的类和继承的实现方法比较</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/06/16/fiddler-instructions/">Fiddler使用说明</a></li><li class="post-list-item"><a class="post-list-link" href="/2014/09/18/mktime-daylight/">标准库函数mktime与夏令时</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/夏令时/" style="font-size: 15px;">夏令时</a> <a href="/tags/ACM/" style="font-size: 15px;">ACM</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/串口/" style="font-size: 15px;">串口</a> <a href="/tags/VBox/" style="font-size: 15px;">VBox</a> <a href="/tags/LCD/" style="font-size: 15px;">LCD</a> <a href="/tags/Vim/" style="font-size: 15px;">Vim</a> <a href="/tags/Ubuntu/" style="font-size: 15px;">Ubuntu</a> <a href="/tags/SublimeText2/" style="font-size: 15px;">SublimeText2</a> <a href="/tags/G/" style="font-size: 15px;">G++</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Github/" style="font-size: 15px;">Github</a> <a href="/tags/Octopress/" style="font-size: 15px;">Octopress</a> <a href="/tags/Win7/" style="font-size: 15px;">Win7</a> <a href="/tags/字符串/" style="font-size: 15px;">字符串</a> <a href="/tags/Jekyll/" style="font-size: 15px;">Jekyll</a> <a href="/tags/前端/" style="font-size: 15px;">前端</a> <a href="/tags/Fiddler/" style="font-size: 15px;">Fiddler</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/TQ2440/" style="font-size: 15px;">TQ2440</a> <a href="/tags/flash/" style="font-size: 15px;">flash</a> <a href="/tags/播放器/" style="font-size: 15px;">播放器</a> <a href="/tags/vagrant/" style="font-size: 15px;">vagrant</a> <a href="/tags/nfs/" style="font-size: 15px;">nfs</a> <a href="/tags/fis/" style="font-size: 15px;">fis</a> <a href="/tags/javascript/" style="font-size: 15px;">javascript</a> <a href="/tags/类/" style="font-size: 15px;">类</a> <a href="/tags/继承/" style="font-size: 15px;">继承</a> <a href="/tags/npm/" style="font-size: 15px;">npm</a> <a href="/tags/cnpm/" style="font-size: 15px;">cnpm</a> <a href="/tags/gulp/" style="font-size: 15px;">gulp</a> <a href="/tags/webpack/" style="font-size: 15px;">webpack</a> <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/co/" style="font-size: 15px;">co</a> <a href="/tags/node/" style="font-size: 15px;">node</a> <a href="/tags/dubbo/" style="font-size: 15px;">dubbo</a> <a href="/tags/Node/" style="font-size: 15px;">Node</a> <a href="/tags/性能/" style="font-size: 15px;">性能</a></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">© <a href="/." rel="nofollow">Corey's Blog.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.css?v=0.0.0"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

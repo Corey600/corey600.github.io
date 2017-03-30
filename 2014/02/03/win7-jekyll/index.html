@@ -1,0 +1,73 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Win7下Jekyll折腾笔记 | Corey's Blog</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Win7下Jekyll折腾笔记</h1><a id="logo" href="/.">Corey's Blog</a><p class="description"></p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Win7下Jekyll折腾笔记</h1><div class="post-meta">Feb 3, 2014<span> | </span><span class="category"><a href="/categories/备忘/">备忘</a></span></div><div class="clear"><div id="toc" class="toc-article"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装RubyInstaller和DevKit"><span class="toc-number">1.</span> <span class="toc-text">安装RubyInstaller和DevKit</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装效率更好的模版解释器"><span class="toc-number">2.</span> <span class="toc-text">安装效率更好的模版解释器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#更换淘宝的源及安装Jekyll"><span class="toc-number">3.</span> <span class="toc-text">更换淘宝的源及安装Jekyll</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#运行Jekyll"><span class="toc-number">4.</span> <span class="toc-text">运行Jekyll</span></a></li></ol></div></div><div class="post-content"><ul>
+<li><h4 id="安装RubyInstaller和DevKit"><a href="#安装RubyInstaller和DevKit" class="headerlink" title="安装RubyInstaller和DevKit"></a><em>安装RubyInstaller和DevKit</em></h4></li>
+</ul>
+<p>进入DevKit安装目录运行如下命令</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ruby dk.rb init</div><div class="line">ruby dk.rb install</div></pre></td></tr></table></figure>
+<p>安装结果如下</p>
+<pre><code>E:\Programs\DevKit&gt;ruby dk.rb init
+[INFO] found RubyInstaller v1.9.3 at E:/Programs/Ruby193
+
+Initialization complete! Please review and modify the auto-generated
+&apos;config.yml&apos; file to ensure it contains the root directories to all
+of the installed Rubies you want enhanced by the DevKit.
+
+E:\Programs\DevKit&gt;ruby dk.rb install
+[INFO] Updating convenience notice gem override for &apos;E:/Programs/Ruby193&apos;
+[INFO] Installing &apos;E:/Programs/Ruby193/lib/ruby/site_ruby/devkit.rb&apos;
+
+E:\Programs\DevKit&gt;ruby dk.rb review
+Based upon the settings in the &apos;config.yml&apos; file generated
+from running &apos;ruby dk.rb init&apos; and any of your customizations,
+DevKit functionality will be injected into the following Rubies
+when you run &apos;ruby dk.rb install&apos;.
+
+E:/Programs/Ruby193
+</code></pre><a id="more"></a>
+<ul>
+<li><h4 id="安装效率更好的模版解释器"><a href="#安装效率更好的模版解释器" class="headerlink" title="安装效率更好的模版解释器"></a><em>安装效率更好的模版解释器</em></h4></li>
+</ul>
+<p>默认的<code>Maruku</code>是纯ruby的Markdown模版解释器，而<code>RDiscount</code>则是c写的模版解释器，效率更好。可以参考如下别人做的对比</p>
+<blockquote>
+<p>BlueCloth: 13.029987s total time, 00.130300s average<br>Maruku: 08.424132s total time, 00.084241s average<br>RDiscount: 00.082019s total time, 00.000820s average   </p>
+</blockquote>
+<p>运行以下命令安装</p>
+<pre><code>gem install rdiscount --platform=ruby
+</code></pre><p>安装成功也能证明之前Ruby和DevKit安装成功。但是因为rdiscount在ruby1.9.2版本上有个bug，安装rdiscount的时候可能会遇到问题，升级到1.9.3可以解决。安装成功结果如下</p>
+<pre><code>E:\Programs\DevKit&gt;gem install rdiscount --platform=ruby
+Fetching: rdiscount-2.1.7.gem (100%)
+Temporarily enhancing PATH to include DevKit...
+Building native extensions.  This could take a while...
+Successfully installed rdiscount-2.1.7
+1 gem installed
+Installing ri documentation for rdiscount-2.1.7...
+Installing RDoc documentation for rdiscount-2.1.7...
+
+E:\Programs\DevKit&gt;
+</code></pre><p>然后在站点下的<code>_config.yml</code>文件中加入以下配置</p>
+<pre><code>markdown: rdiscount
+</code></pre><ul>
+<li><h4 id="更换淘宝的源及安装Jekyll"><a href="#更换淘宝的源及安装Jekyll" class="headerlink" title="更换淘宝的源及安装Jekyll"></a><em>更换淘宝的源及安装Jekyll</em></h4></li>
+</ul>
+<p>运行如下命令</p>
+<pre><code>$ gem sources --remove http://rubygems.org/
+$ gem sources -a http://ruby.taobao.org/
+$ gem sources -l
+*** CURRENT SOURCES ***
+
+http://ruby.taobao.org
+# 请确保只有 ruby.taobao.org
+$ gem install jekyll
+</code></pre><p>参考链接：<a href="http://ruby.taobao.org/" target="_blank" rel="external">RubyGems 镜像 - 淘宝网</a></p>
+<p>以上安装最好在取得Win7管理员权限的情况下进行。</p>
+<ul>
+<li><h4 id="运行Jekyll"><a href="#运行Jekyll" class="headerlink" title="运行Jekyll"></a><em>运行Jekyll</em></h4></li>
+</ul>
+<p>本地运行Jekyll命令如下</p>
+<pre><code>jekyll serve --watch #不加--watch则不会检测文件夹内的变化，即修改后需要重新启动jekyll
+</code></pre></div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a data-url="https://corey600.github.io/2014/02/03/win7-jekyll/" data-id="cj0vrn64s000vv0qdeups1v6n" class="article-share-link">分享到</a><div class="tags"><a href="/tags/Win7/">Win7</a><a href="/tags/Jekyll/">Jekyll</a></div><div class="post-nav"><a href="/2014/09/18/mktime-daylight/" class="pre">标准库函数mktime与夏令时</a><a href="/2013/05/05/boyer-moore/" class="next">字符串匹配的Boyer-Moore算法</a></div></div></div></div><div class="pure-u-1 pure-u-md-1-4"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/备忘/">备忘</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/总结/">总结</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/转载/">转载</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/12/15/node-performance-analysis/">由一个简单Node服务引申的Node性能分析方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/28/koa-and-co/">koa和co的简单分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/03/node-dubbo/">使用node开发dubbo远程调用客户端</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/22/private-npm-service/">私有NPM服务搭建</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/13/gulp-workflow/">gulp前端构建工作流</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/01/04/flash-player/">Flash播放器研究</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/08/11/vagrant-instructions/">使用vagrant虚拟机开发调试</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/07/07/js-class-inheritance/">JS的类和继承的实现方法比较</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/06/16/fiddler-instructions/">Fiddler使用说明</a></li><li class="post-list-item"><a class="post-list-link" href="/2014/09/18/mktime-daylight/">标准库函数mktime与夏令时</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/夏令时/" style="font-size: 15px;">夏令时</a> <a href="/tags/ACM/" style="font-size: 15px;">ACM</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/串口/" style="font-size: 15px;">串口</a> <a href="/tags/VBox/" style="font-size: 15px;">VBox</a> <a href="/tags/LCD/" style="font-size: 15px;">LCD</a> <a href="/tags/Vim/" style="font-size: 15px;">Vim</a> <a href="/tags/Ubuntu/" style="font-size: 15px;">Ubuntu</a> <a href="/tags/SublimeText2/" style="font-size: 15px;">SublimeText2</a> <a href="/tags/G/" style="font-size: 15px;">G++</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Github/" style="font-size: 15px;">Github</a> <a href="/tags/Octopress/" style="font-size: 15px;">Octopress</a> <a href="/tags/Win7/" style="font-size: 15px;">Win7</a> <a href="/tags/字符串/" style="font-size: 15px;">字符串</a> <a href="/tags/Jekyll/" style="font-size: 15px;">Jekyll</a> <a href="/tags/前端/" style="font-size: 15px;">前端</a> <a href="/tags/Fiddler/" style="font-size: 15px;">Fiddler</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/TQ2440/" style="font-size: 15px;">TQ2440</a> <a href="/tags/flash/" style="font-size: 15px;">flash</a> <a href="/tags/播放器/" style="font-size: 15px;">播放器</a> <a href="/tags/vagrant/" style="font-size: 15px;">vagrant</a> <a href="/tags/nfs/" style="font-size: 15px;">nfs</a> <a href="/tags/fis/" style="font-size: 15px;">fis</a> <a href="/tags/javascript/" style="font-size: 15px;">javascript</a> <a href="/tags/类/" style="font-size: 15px;">类</a> <a href="/tags/继承/" style="font-size: 15px;">继承</a> <a href="/tags/npm/" style="font-size: 15px;">npm</a> <a href="/tags/cnpm/" style="font-size: 15px;">cnpm</a> <a href="/tags/gulp/" style="font-size: 15px;">gulp</a> <a href="/tags/webpack/" style="font-size: 15px;">webpack</a> <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/co/" style="font-size: 15px;">co</a> <a href="/tags/node/" style="font-size: 15px;">node</a> <a href="/tags/dubbo/" style="font-size: 15px;">dubbo</a> <a href="/tags/Node/" style="font-size: 15px;">Node</a> <a href="/tags/性能/" style="font-size: 15px;">性能</a></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">© <a href="/." rel="nofollow">Corey's Blog.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.css?v=0.0.0"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

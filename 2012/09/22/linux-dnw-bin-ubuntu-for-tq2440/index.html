@@ -1,0 +1,176 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Linux下用Dnw烧写bin镜像(Ubuntu for TQ2440) | Corey's Blog</title><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/5.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Linux下用Dnw烧写bin镜像(Ubuntu for TQ2440)</h1><a id="logo" href="/.">Corey's Blog</a><p class="description"></p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Linux下用Dnw烧写bin镜像(Ubuntu for TQ2440)</h1><div class="post-meta">Sep 22, 2012<span> | </span><span class="category"><a href="/categories/备忘/">备忘</a></span></div><div class="clear"><div id="toc" class="toc-article"><div class="toc-title">文章目录</div></div></div><div class="post-content"><p>我们要用到的工具是C-kermit 和 dnw2。其中C-kermit是串口连接程序。而dnw2是用来向开发板下载程序的。<br>首先我们安装kermit，我们可以使用<code>#sudo apt-get install ckermit</code>来安装kermit。</p>
+<p>下载完成之后还要对其进行配置。<code>#sudo vim /etc/kermit/kermrc</code></p>
+<p><img src="/images/20120922/1.jpg" alt="Alt text"></p>
+<a id="more"></a>
+<p>set line /dev/ttyUSB0 (这里填写通过命令#dmesg看到的设备名。上图中红线部分。attached to ttyUSB0 说明已经附加到了ttyUSB0这个设备上了。)</p>
+<pre><code>set speed 115200
+
+set carrier-watch off
+
+set handshake none
+
+set flow-control none
+
+robust
+
+set file type bin
+
+set file name lit
+
+set rec pack 1000
+
+set send pack 1000
+
+set window 5
+</code></pre><p>配置完以后的样子</p>
+<p><img src="/images/20120922/2.jpg" alt="Alt text"></p>
+<p>红色方框内的内容为添加内容。</p>
+<p>使用以下命令打开kermit：<code>#sudo kermit</code></p>
+<p>使用以下命令链接：<code>&gt;connect</code></p>
+<p>就可以使用串口了。</p>
+<p>切换：按下Ctrl+\ ,再按c 就跳回kermit。跳回串口控制，可以输入c,即connect命令。</p>
+<p><img src="/images/20120922/3.jpg" alt="Alt text"></p>
+<p>上图是使用kermit连接开发板。</p>
+<p>接着说一下dnw2的使用。先把以下某大神写的代码保存成文件dnw2.c</p>
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;usb.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;unistd.h&gt;
+
+#define QQ2440_SECBULK_IDVENDOR        0x5345
+#define QQ2440_SECBULK_IDPRODUCT    0x1234
+
+struct usb_dev_handle * open_port() {
+    struct usb_bus *busses, *bus;
+
+    usb_init();
+    usb_find_busses();
+    usb_find_devices();
+
+    busses = usb_get_busses();
+    for (bus = busses; bus; bus = bus-&gt;next) {
+        struct usb_device *dev;
+        for (dev = bus-&gt;devices; dev; dev = dev-&gt;next) {
+            printf(&quot;idVendor:0x%x\t,ipProduct:0x%x\n&quot;,
+                    dev-&gt;descriptor.idVendor, dev-&gt;descriptor.idProduct);
+            if (QQ2440_SECBULK_IDVENDOR == dev-&gt;descriptor.idVendor
+                    &amp;&amp; QQ2440_SECBULK_IDPRODUCT == dev-&gt;descriptor.idProduct) {
+                printf(&quot;Target usb device found!\n&quot;);
+                struct usb_dev_handle *hdev = usb_open(dev);
+                if (!hdev) {
+                    perror(&quot;Cannot open device&quot;);
+                } else {
+                    if (0 != usb_claim_interface(hdev, 0)) {
+                        perror(&quot;Cannot claim interface&quot;);
+                        usb_close(hdev);
+                        hdev = NULL;
+                    }
+                }
+                return hdev;
+            }
+        }
+    }
+
+    printf(&quot;Target usb device not found!\n&quot;);
+
+    return NULL;
+}
+
+void usage() {
+    printf(&quot;Usage: dnw2 &lt;file&gt;\n\n&quot;);
+}
+
+unsigned char* prepare_write_buf(char *filename, unsigned int *len) {
+    unsigned char *write_buf = NULL;
+    struct stat fs;
+
+    int fd = open(filename, O_RDONLY);
+    if (-1 == fd) {
+        perror(&quot;Cannot open file&quot;);
+        return NULL;
+    }
+    if (-1 == fstat(fd, &amp;fs)) {
+        perror(&quot;Cannot get file size&quot;);
+        goto error;
+    }
+    write_buf = (unsigned char*) malloc(fs.st_size + 10);
+    if (NULL == write_buf) {
+        perror(&quot;malloc failed&quot;);
+        goto error;
+    }
+
+    if (fs.st_size != read(fd, write_buf + 8, fs.st_size)) {
+        perror(&quot;Reading file failed&quot;);
+        goto error;
+    }
+
+    printf(&quot;Filename : %s\n&quot;, filename);
+    printf(&quot;Filesize : %d bytes\n&quot;, fs.st_size);
+
+    *((u_int32_t*) write_buf) = 0x30000000; //download address
+    *((u_int32_t*) write_buf + 1) = fs.st_size + 10; //download size;
+
+    *len = fs.st_size + 10;
+    return write_buf;
+    error: if (fd != -1)
+        close(fd);
+    if (NULL != write_buf)
+        free(write_buf);
+    fs.st_size = 0;
+    return NULL;
+}
+
+int main(int argc, char *argv[]) {
+    if (2 != argc) {
+        usage();
+        return 1;
+    }
+
+    struct usb_dev_handle *hdev = open_port();
+    if (!hdev) {
+        return 1;
+    }
+
+    unsigned int len = 0;
+    unsigned char* write_buf = prepare_write_buf(argv[1], &amp;len);
+    if (NULL == write_buf)
+        return 1;
+
+    unsigned int remain = len;
+    unsigned int towrite;
+    printf(&quot;Writing data ...\n&quot;);
+    while (remain) {
+        towrite = remain &gt; 512 ? 512 : remain;
+        if (towrite != usb_bulk_write(hdev, 0x03, write_buf + (len - remain),
+                towrite, 3000)) {
+            perror(&quot;usb_bulk_write failed&quot;);
+            break;
+        }
+        remain -= towrite;
+        printf(&quot;\r%d%\t %d bytes     &quot;, (len - remain) * 100 / len, len
+                - remain);
+        fflush(stdout);
+    }
+    if (0 == remain)
+        printf(&quot;Done!\n&quot;);
+    return 0;
+}
+</code></pre><p>然后安装 libusb 库<code>#sudo apt-get install libusb-dev</code></p>
+<p>编译 dnw2.c 文件<code>#gcc dnw2.c -o dnw2 -lusb</code></p>
+<p>把生成的可执行文件 dnw2 移动到 /opt/dnw 里面<code>#sudo mv dnw2 /opt/dnw</code></p>
+<p>以root权限打开<code>#sudo vim /etc/profile</code></p>
+<p>在文件末尾加上<code>export PATH=$PATH:/opt/dnw</code></p>
+<p>保存退出后运行命令<code>#source /etc/profile</code></p>
+<p>PC 链接 TQ2440开发板，在终端里面运行 <code>#sudo kermit</code>  ，然后connect连接，打开串口，按相应键进入 USB 传输</p>
+<p>再开一个终端，输入<code>#sudo dnw2 &lt;文件完整路径&gt;</code></p>
+<p>等待下载完毕。</p>
+<p>参考链接：<br><a href="http://tanglz2005.blog.163.com/blog/static/8569819620122213535490/" target="_blank" rel="external">linux环境下安装dnw（for mini2440）</a><br><a href="http://hi.baidu.com/lv0xian/item/dd7e26321316b880c2cf29a5" target="_blank" rel="external">mini2440 在 ubuntu12.04 下 minicom 串口 dnw2 实验成功</a></p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a data-url="https://corey600.github.io/2012/09/22/linux-dnw-bin-ubuntu-for-tq2440/" data-id="cj0vrn64h000gv0qd1ovlzdqm" class="article-share-link">分享到</a><div class="tags"><a href="/tags/TQ2440/">TQ2440</a><a href="/tags/Linux/">Linux</a><a href="/tags/Ubuntu/">Ubuntu</a></div><div class="post-nav"><a href="/2013/02/07/ubuntu-sublime-text-2-g-plus-plus-and-python/" class="pre">Ubuntu下SublimeText2的G++和Python配置</a><a href="/2012/09/09/lcd-tq2440-linux-2.6.32.59/" class="next">基于TQ2440上Linux-2.6.32.59的LCD驱动移植</a></div></div></div></div><div class="pure-u-1 pure-u-md-1-4"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/备忘/">备忘</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/总结/">总结</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/转载/">转载</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/12/15/node-performance-analysis/">由一个简单Node服务引申的Node性能分析方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/09/28/koa-and-co/">koa和co的简单分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/08/03/node-dubbo/">使用node开发dubbo远程调用客户端</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/07/22/private-npm-service/">私有NPM服务搭建</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/06/13/gulp-workflow/">gulp前端构建工作流</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/01/04/flash-player/">Flash播放器研究</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/08/11/vagrant-instructions/">使用vagrant虚拟机开发调试</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/07/07/js-class-inheritance/">JS的类和继承的实现方法比较</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/06/16/fiddler-instructions/">Fiddler使用说明</a></li><li class="post-list-item"><a class="post-list-link" href="/2014/09/18/mktime-daylight/">标准库函数mktime与夏令时</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/夏令时/" style="font-size: 15px;">夏令时</a> <a href="/tags/ACM/" style="font-size: 15px;">ACM</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/串口/" style="font-size: 15px;">串口</a> <a href="/tags/VBox/" style="font-size: 15px;">VBox</a> <a href="/tags/LCD/" style="font-size: 15px;">LCD</a> <a href="/tags/Vim/" style="font-size: 15px;">Vim</a> <a href="/tags/Ubuntu/" style="font-size: 15px;">Ubuntu</a> <a href="/tags/SublimeText2/" style="font-size: 15px;">SublimeText2</a> <a href="/tags/G/" style="font-size: 15px;">G++</a> <a href="/tags/Python/" style="font-size: 15px;">Python</a> <a href="/tags/Github/" style="font-size: 15px;">Github</a> <a href="/tags/Octopress/" style="font-size: 15px;">Octopress</a> <a href="/tags/Win7/" style="font-size: 15px;">Win7</a> <a href="/tags/字符串/" style="font-size: 15px;">字符串</a> <a href="/tags/Jekyll/" style="font-size: 15px;">Jekyll</a> <a href="/tags/前端/" style="font-size: 15px;">前端</a> <a href="/tags/Fiddler/" style="font-size: 15px;">Fiddler</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/TQ2440/" style="font-size: 15px;">TQ2440</a> <a href="/tags/flash/" style="font-size: 15px;">flash</a> <a href="/tags/播放器/" style="font-size: 15px;">播放器</a> <a href="/tags/vagrant/" style="font-size: 15px;">vagrant</a> <a href="/tags/nfs/" style="font-size: 15px;">nfs</a> <a href="/tags/fis/" style="font-size: 15px;">fis</a> <a href="/tags/javascript/" style="font-size: 15px;">javascript</a> <a href="/tags/类/" style="font-size: 15px;">类</a> <a href="/tags/继承/" style="font-size: 15px;">继承</a> <a href="/tags/npm/" style="font-size: 15px;">npm</a> <a href="/tags/cnpm/" style="font-size: 15px;">cnpm</a> <a href="/tags/gulp/" style="font-size: 15px;">gulp</a> <a href="/tags/webpack/" style="font-size: 15px;">webpack</a> <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/co/" style="font-size: 15px;">co</a> <a href="/tags/node/" style="font-size: 15px;">node</a> <a href="/tags/dubbo/" style="font-size: 15px;">dubbo</a> <a href="/tags/Node/" style="font-size: 15px;">Node</a> <a href="/tags/性能/" style="font-size: 15px;">性能</a></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">© <a href="/." rel="nofollow">Corey's Blog.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="/css/jquery.fancybox.css?v=0.0.0"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
