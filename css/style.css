@@ -287,6 +287,16 @@ div {
         font-family: "FontAwesome";
         content: "\f0c6";
         padding-right: 0.3em; }
+  .post .comments-link-to {
+    padding: 10px;
+    border: solid 1px #ddd;
+    font-size: 14px; }
+    .post .comments-link-to .comments-email-to {
+      color: #01579f;
+      margin: 0 5px; }
+    .post .comments-link-to a {
+      color: #01579f;
+      margin: 0 5px; }
 
 .page-navigator {
   border-top: 1px solid #ddd;
@@ -357,7 +367,8 @@ div {
   .hidden_mid_and_down {
     display: none !important; }
   #sidebar {
-    border-left-width: 0px; }
+    border-left-width: 0px;
+    padding-left: 0; }
   #header .site-name {
     margin-bottom: 20px;
     text-align: center; }

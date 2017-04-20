@@ -4,6 +4,60 @@
   
     
     <entry>
+      <title><![CDATA[React多语言方案]]></title>
+      <url>https://corey600.github.io/2017/04/20/react-international/</url>
+      <content type="html"><![CDATA[<h1 id="React多语言方案"><a href="#React多语言方案" class="headerlink" title="React多语言方案"></a>React多语言方案</h1><p>由于框架使用的是 <a href="https://facebook.github.io/react/" target="_blank" rel="external">React</a> ， 多语言方案也选择了生态系统下的 <a href="https://github.com/yahoo/react-intl" target="_blank" rel="external">react-intl</a> 模块，它是雅虎 <a href="https://formatjs.io/" target="_blank" rel="external">FormatJS</a> 计划的一部分。</p>
+<h2 id="翻译字符串替换"><a href="#翻译字符串替换" class="headerlink" title="翻译字符串替换"></a>翻译字符串替换</h2><p>使用 <a href="https://github.com/yahoo/react-intl" target="_blank" rel="external">react-intl</a> 替换字符串用以翻译很方便。只需将整个业务父组件包裹在 IntlProvider 中：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">ReactDOM.render(</div><div class="line">    <span class="xml"><span class="tag">&lt;<span class="name">IntlProvider</span></span></span></div><div class="line">        <span class="attr">locale</span>=<span class="string">&#123;usersLocale&#125;</span></div><div class="line">        <span class="attr">messages</span>=<span class="string">&#123;translationsForUsersLocale&#125;</span></div><div class="line">    &gt;</div><div class="line">        <span class="tag">&lt;<span class="name">App</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">IntlProvider</span>&gt;</span>,</div><div class="line">    <span class="built_in">document</span>.getElementById(<span class="string">'container'</span>)</div><div class="line">);</div></pre></td></tr></table></figure>
+<p>其中<code>usersLocale</code>是当前选择的语言，<code>translationsForUsersLocale</code>是用于翻译的键值对数据。</p>
+<p>在业务父组件中要显示字符串时插入<code>FormattedRelative</code>组件，其中key是上文提到的翻译键值对中的对应key值：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">FormattedRelative</span> <span class="attr">value</span>=<span class="string">&#123;key&#125;/</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>其他用法参考<a href="https://github.com/yahoo/react-intl/wiki/API" target="_blank" rel="external">官方API文档</a>。</p>
+<p>需要注意的是，还需要加载针对不同语言的资源包，需要使用哪些语言就要加载对应文件：</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> &#123;addLocaleData&#125; <span class="keyword">from</span> <span class="string">'react-intl'</span>;</div><div class="line"><span class="keyword">import</span> en <span class="keyword">from</span> <span class="string">'react-intl/locale-data/en'</span>;</div><div class="line"><span class="keyword">import</span> fr <span class="keyword">from</span> <span class="string">'react-intl/locale-data/fr'</span>;</div><div class="line"><span class="keyword">import</span> es <span class="keyword">from</span> <span class="string">'react-intl/locale-data/es'</span>;</div><div class="line"></div><div class="line">addLocaleData([...en, ...fr, ...es]);</div></pre></td></tr></table></figure>
+<p>如果是在低版本的浏览器环境下，还需要考虑加载 ployfill 库，具体可以参考 <a href="https://formatjs.io/guides/runtime-environments/#polyfill-browsers" target="_blank" rel="external">How to Polyfill Browsers</a>。</p>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> 'intl/locale-<span class="keyword">data</span>/jsonp/en';</div><div class="line"><span class="keyword">import</span> 'intl/locale-<span class="keyword">data</span>/jsonp/fr';</div><div class="line"><span class="keyword">import</span> 'intl/locale-<span class="keyword">data</span>/jsonp/es';</div></pre></td></tr></table></figure>
+<h2 id="获取当前语言"><a href="#获取当前语言" class="headerlink" title="获取当前语言"></a>获取当前语言</h2><p>由于当前业务需要，在获取当前语言时，还需要考虑到该用户属性，即保存在后端的语言属性。</p>
+<p>基本流程：</p>
+<ul>
+<li>=&gt; 有则获取使用后端保存的语言</li>
+<li>=&gt; 有则获取使用浏览器端cookies保存的语言</li>
+<li>=&gt; 有则获取使用系统的语言</li>
+</ul>
+<p>在获取系统使用语言时，使用了 <a href="https://github.com/moimikey/locale2" target="_blank" rel="external">locale2</a> 组件。</p>
+<h2 id="切换语言、按需加载"><a href="#切换语言、按需加载" class="headerlink" title="切换语言、按需加载"></a>切换语言、按需加载</h2><p>考虑提供切换语言功能，基本实现原理比较简单，只要修改保存的语言值（包括修改后台保存的值和保存在浏览器cookie中的值），然后reload当前页面。</p>
+<p>但是这样做的缺点是，必须事先加载所有可能的语言的资源文件，包括浏览器polyfill和翻译文件。在当前用户只使用一种特定语言的情况下，会造成加载资源的浪费，拖慢加载速度。</p>
+<p>但是考虑到，ES6 的 import 是禁止动态引入模块文件的（基于可能的优化角度做的限制），好在我们并不是在原生的环境下使用 ES6 的 import 特性。事实上，在使用 webpack2.x 的情况下，这里的 import 是 webpack 模块方案提供的工具，然而 webpack2.x 是支持动态的 import 的，具体参考官方文档 <a href="https://webpack.js.org/guides/code-splitting-async/#dynamic-import-import-" target="_blank" rel="external">webpack - Dynamic import</a>。</p>
+<p>动态加载的 demo 就可以这么写：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">importLocale</span>(<span class="params">locale</span>) </span>&#123;</div><div class="line">  <span class="built_in">Promise</span>.all([</div><div class="line">	<span class="comment">// 加载 polyfill</span></div><div class="line">	<span class="keyword">import</span>(<span class="string">`intl/locale-data/jsonp/<span class="subst">$&#123;locale&#125;</span>`</span>),</div><div class="line">	<span class="comment">// 加载 react-intl 资源文件</span></div><div class="line">	<span class="keyword">import</span>(<span class="string">`react-intl/locale-data/<span class="subst">$&#123;locale&#125;</span>`</span>),</div><div class="line">	<span class="comment">// 加载翻译文件</span></div><div class="line">	<span class="keyword">import</span>(<span class="string">`../../locales/<span class="subst">$&#123;getFilename(locale)&#125;</span>`</span>),</div><div class="line">  ]).</div><div class="line">	then(<span class="function">(<span class="params">values</span>) =&gt;</span> &#123;</div><div class="line">	  addLocaleData([...values[<span class="number">1</span>]]);</div><div class="line">	  <span class="keyword">let</span> messages = values[<span class="number">2</span>].default;</div><div class="line">	&#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>会注意到，这里使用了 Promise，因为其实动态 import 可以看成一个函数，返回了一个 Promise 对象。动态加载需要并行执行的话，需要使用 Promise.all 。当然在不支持 Promise 的低版本浏览器，需要引入 相应 ployfill ，比如 <a href="https://github.com/stefanpenner/es6-promise" target="_blank" rel="external">es6-promise</a>。</p>
+<p>最后，我们在 webpack 的打包配置文件中，给 babel 增加一个插件，这个 <a href="https://webpack.js.org/guides/code-splitting-async/#dynamic-import-import-" target="_blank" rel="external">webpack - Dynamic import</a> 也有说明。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="string">module.exports</span> <span class="string">=</span> <span class="string">&#123;</span></div><div class="line"><span class="attr">  entry:</span> <span class="string">'./index-es2015.js'</span><span class="string">,</span></div><div class="line"><span class="attr">  output:</span> <span class="string">&#123;</span></div><div class="line"><span class="attr">    filename:</span> <span class="string">'dist.js'</span><span class="string">,</span></div><div class="line">  <span class="string">&#125;,</span></div><div class="line"><span class="attr">  module:</span> <span class="string">&#123;</span></div><div class="line"><span class="attr">    rules:</span> <span class="string">[&#123;</span></div><div class="line"><span class="attr">      test:</span> <span class="string">/\.js$/,</span></div><div class="line"><span class="attr">      exclude:</span> <span class="string">/(node_modules)/,</span></div><div class="line"><span class="attr">      use:</span> <span class="string">[&#123;</span></div><div class="line"><span class="attr">        loader:</span> <span class="string">'babel-loader'</span><span class="string">,</span></div><div class="line"><span class="attr">        options:</span> <span class="string">&#123;</span></div><div class="line"><span class="attr">          presets:</span> <span class="string">[['es2015',</span> <span class="string">&#123;modules:</span> <span class="literal">false</span><span class="string">&#125;]],</span></div><div class="line"><span class="attr">          plugins:</span> <span class="string">['syntax-dynamic-import']</span></div><div class="line">        <span class="string">&#125;</span></div><div class="line">      <span class="string">&#125;]</span></div><div class="line">    <span class="string">&#125;]</span></div><div class="line">  <span class="string">&#125;</span></div><div class="line"><span class="string">&#125;;</span></div></pre></td></tr></table></figure>
+<h2 id="已知问题"><a href="#已知问题" class="headerlink" title="已知问题"></a>已知问题</h2><p>在IE浏览器环境下，直接使用上文的动态加载文件方案，会报找不到 react-intl 资源文件错误，初步判断是加载顺序的问题。解决方案是把英文当成默认语言，先加载对应资源文件。再根据实际具体语言加载文件。</p>
+<p><em>后话：</em></p>
+<p>事实上，很多动态加载多语言资源文件的方案，是直接在 html 中添加 <code>script</code> 标签，然后动态修改标签中路径的值。但这里考虑到统一构建方案，翻译文件需要修改而必须添加md5值等等一些比较麻烦的处理，而选择了上文这样的动态加载方式。</p>
+]]></content>
+      
+        <categories>
+            
+            <category> 备忘 </category>
+            
+        </categories>
+        
+        
+        <tags>
+            
+            <tag> 前端 </tag>
+            
+            <tag> React </tag>
+            
+            <tag> i18n </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[由一个简单Node服务引申的Node性能分析方法]]></title>
       <url>https://corey600.github.io/2016/12/15/node-performance-analysis/</url>
       <content type="html"><![CDATA[<h3 id="一、问题现象"><a href="#一、问题现象" class="headerlink" title="一、问题现象"></a>一、问题现象</h3><p>一个简单Node服务在500并发的压力下长期运行时会出现内存占用不断增长的问题。</p>
@@ -842,15 +896,16 @@
 <p>Fiddler是一个http协议调试代理工具，它能够记录并检查所有你的电脑和互联网之间的http通讯，设置断点，查看所有的“进出”Fiddler的数据（指cookie,html,js,css等文件，这些都可以让你胡乱修改的意思）。</p>
 </blockquote>
 <h3 id="下载和安装"><a href="#下载和安装" class="headerlink" title="下载和安装"></a>下载和安装</h3><p><a href="http://www.telerik.com/download/fiddler" target="_blank" rel="external">下载地址</a> <a href="http://docs.telerik.com/fiddler/Configure-Fiddler/Tasks/InstallFiddler" target="_blank" rel="external">安装过程</a></p>
-<h3 id="基本界面"><a href="#基本界面" class="headerlink" title="基本界面"></a>基本界面</h3><p><img src="/images/20150616/f1.jpg" alt="基本界面"></p>
-<ul>
+<h3 id="基本界面"><a href="#基本界面" class="headerlink" title="基本界面"></a>基本界面</h3><ul>
 <li>监听开关：开启或者关闭。<code>capturing</code>表示开启状态。</li>
 <li>监听类型：有 监听所有进程请求(All processes)、监听浏览器请求(Web browsers)、监听非浏览器请求(Non-Browser)和隐藏所有(Hide All)</li>
 <li>请求列表：请求列表的信息分别有 结果(Result)，协议(Protocol)，主机名(Host)，网页地址(URL)，内容大小(Body)，缓存(Caching)，响应的HTTP内容类型(Content-Type)，请求所运行的程序(Process)，注释(Comments)，自定义(Custom)</li>
 <li>功能区：包括各种数据流查看器、日志、重定向、请求构造、过滤器、时间轴、统计图表、脚本。</li>
 </ul>
+<p><img src="/images/20150616/f1.jpg" alt="基本界面"></p>
 <a id="more"></a>
-<h6 id="以下只讲具体功能操作，其他细节请参阅官方文档和使用搜索"><a href="#以下只讲具体功能操作，其他细节请参阅官方文档和使用搜索" class="headerlink" title="以下只讲具体功能操作，其他细节请参阅官方文档和使用搜索"></a>以下只讲具体功能操作，其他细节请<a href="http://docs.telerik.com/fiddler/configure-fiddler/tasks/configurefiddler" target="_blank" rel="external">参阅官方文档</a>和<a href="http://www.bing.com/explore/" target="_blank" rel="external">使用搜索</a></h6><h3 id="抓取并解密HTTPS请求"><a href="#抓取并解密HTTPS请求" class="headerlink" title="抓取并解密HTTPS请求"></a>抓取并解密HTTPS请求</h3><p>Fiddler是可以抓取HTTPS的请求，并解密的。但是浏览器会检查数字证书，经过Fiddler解密的请求会被浏览器认为是遭到窃听的。为此，Fiddler通过一个自己的数字证书重新加密HTTPS请求。设置Fiddler为抓取并解密HTTPS请求时，会自动生成一个名为<code>DO_NOT_TRUST_FiddlerRoot</code>的CA证书，并能通过该CA证书生成各个域名的TLS证书。只要将<code>DO_NOT_TRUST_FiddlerRoot</code>证书设置为浏览器或其他软件的信任CA证书，浏览器就会认为被Fiddler重新加密的HTTPS请求是可信的，不会再提示“证书错误警告”。</p>
+<p><em>以下只讲具体功能操作，其他细节请<a href="http://docs.telerik.com/fiddler/configure-fiddler/tasks/configurefiddler" target="_blank" rel="external">参阅官方文档</a>和<a href="http://www.bing.com/explore/" target="_blank" rel="external">使用搜索</a></em></p>
+<h3 id="抓取并解密HTTPS请求"><a href="#抓取并解密HTTPS请求" class="headerlink" title="抓取并解密HTTPS请求"></a>抓取并解密HTTPS请求</h3><p>Fiddler是可以抓取HTTPS的请求，并解密的。但是浏览器会检查数字证书，经过Fiddler解密的请求会被浏览器认为是遭到窃听的。为此，Fiddler通过一个自己的数字证书重新加密HTTPS请求。设置Fiddler为抓取并解密HTTPS请求时，会自动生成一个名为<code>DO_NOT_TRUST_FiddlerRoot</code>的CA证书，并能通过该CA证书生成各个域名的TLS证书。只要将<code>DO_NOT_TRUST_FiddlerRoot</code>证书设置为浏览器或其他软件的信任CA证书，浏览器就会认为被Fiddler重新加密的HTTPS请求是可信的，不会再提示“证书错误警告”。</p>
 <p>设置Fiddler抓取和解密HTTPS请求的方法：</p>
 <h4 id="1-开启HTTPS抓取"><a href="#1-开启HTTPS抓取" class="headerlink" title="1.开启HTTPS抓取"></a>1.开启HTTPS抓取</h4><p>打开Fiddler选项窗口：<code>Tools &gt; Fiddler Options &gt; HTTPS</code><br>选择HTTPS标签页，选中<code>Capture HTTPS CONNECTs</code> 和 <code>Decrypt HTTPS traffic</code> 两个复选框。</p>
 <p><img src="/images/20150616/f2.png" alt="基本界面"></p>
@@ -990,73 +1045,28 @@
     <entry>
       <title><![CDATA[Win7下Jekyll折腾笔记]]></title>
       <url>https://corey600.github.io/2014/02/03/win7-jekyll/</url>
-      <content type="html"><![CDATA[<ul>
-<li><h4 id="安装RubyInstaller和DevKit"><a href="#安装RubyInstaller和DevKit" class="headerlink" title="安装RubyInstaller和DevKit"></a><em>安装RubyInstaller和DevKit</em></h4></li>
-</ul>
-<p>进入DevKit安装目录运行如下命令</p>
+      <content type="html"><![CDATA[<h4 id="安装RubyInstaller和DevKit"><a href="#安装RubyInstaller和DevKit" class="headerlink" title="安装RubyInstaller和DevKit"></a><em>安装RubyInstaller和DevKit</em></h4><p>进入DevKit安装目录运行如下命令</p>
 <figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ruby dk.rb init</div><div class="line">ruby dk.rb install</div></pre></td></tr></table></figure>
 <p>安装结果如下</p>
-<pre><code>E:\Programs\DevKit&gt;ruby dk.rb init
-[INFO] found RubyInstaller v1.9.3 at E:/Programs/Ruby193
-
-Initialization complete! Please review and modify the auto-generated
-&apos;config.yml&apos; file to ensure it contains the root directories to all
-of the installed Rubies you want enhanced by the DevKit.
-
-E:\Programs\DevKit&gt;ruby dk.rb install
-[INFO] Updating convenience notice gem override for &apos;E:/Programs/Ruby193&apos;
-[INFO] Installing &apos;E:/Programs/Ruby193/lib/ruby/site_ruby/devkit.rb&apos;
-
-E:\Programs\DevKit&gt;ruby dk.rb review
-Based upon the settings in the &apos;config.yml&apos; file generated
-from running &apos;ruby dk.rb init&apos; and any of your customizations,
-DevKit functionality will be injected into the following Rubies
-when you run &apos;ruby dk.rb install&apos;.
-
-E:/Programs/Ruby193
-</code></pre><a id="more"></a>
-<ul>
-<li><h4 id="安装效率更好的模版解释器"><a href="#安装效率更好的模版解释器" class="headerlink" title="安装效率更好的模版解释器"></a><em>安装效率更好的模版解释器</em></h4></li>
-</ul>
-<p>默认的<code>Maruku</code>是纯ruby的Markdown模版解释器，而<code>RDiscount</code>则是c写的模版解释器，效率更好。可以参考如下别人做的对比</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">E:<span class="string">\Programs\DevKit&gt;ruby</span> dk.rb init</div><div class="line">[INFO] found RubyInstaller v1.<span class="number">9.3</span> at E:/Programs/Ruby193</div><div class="line"></div><div class="line">Initialization complete! Please review <span class="keyword">and</span> modify the auto-generated</div><div class="line"><span class="string">'config.yml'</span> file <span class="keyword">to</span> ensure <span class="literal">it</span> contains the root directories <span class="keyword">to</span> all</div><div class="line"><span class="keyword">of</span> the installed Rubies you want enhanced <span class="keyword">by</span> the DevKit.</div><div class="line"></div><div class="line">E:<span class="string">\Programs\DevKit&gt;ruby</span> dk.rb install</div><div class="line">[INFO] Updating convenience notice gem override <span class="keyword">for</span> <span class="string">'E:/Programs/Ruby193'</span></div><div class="line">[INFO] Installing <span class="string">'E:/Programs/Ruby193/lib/ruby/site_ruby/devkit.rb'</span></div><div class="line"></div><div class="line">E:<span class="string">\Programs\DevKit&gt;ruby</span> dk.rb review</div><div class="line">Based upon the settings <span class="keyword">in</span> the <span class="string">'config.yml'</span> file generated</div><div class="line"><span class="keyword">from</span> running <span class="string">'ruby dk.rb init'</span> <span class="keyword">and</span> any <span class="keyword">of</span> your customizations,</div><div class="line">DevKit functionality will be injected into the following Rubies</div><div class="line"><span class="keyword">when</span> you run <span class="string">'ruby dk.rb install'</span>.</div><div class="line"></div><div class="line">E:/Programs/Ruby193</div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h4 id="安装效率更好的模版解释器"><a href="#安装效率更好的模版解释器" class="headerlink" title="安装效率更好的模版解释器"></a><em>安装效率更好的模版解释器</em></h4><p>默认的<code>Maruku</code>是纯ruby的Markdown模版解释器，而<code>RDiscount</code>则是c写的模版解释器，效率更好。可以参考如下别人做的对比</p>
 <blockquote>
 <p>BlueCloth: 13.029987s total time, 00.130300s average<br>Maruku: 08.424132s total time, 00.084241s average<br>RDiscount: 00.082019s total time, 00.000820s average   </p>
 </blockquote>
 <p>运行以下命令安装</p>
-<pre><code>gem install rdiscount --platform=ruby
-</code></pre><p>安装成功也能证明之前Ruby和DevKit安装成功。但是因为rdiscount在ruby1.9.2版本上有个bug，安装rdiscount的时候可能会遇到问题，升级到1.9.3可以解决。安装成功结果如下</p>
-<pre><code>E:\Programs\DevKit&gt;gem install rdiscount --platform=ruby
-Fetching: rdiscount-2.1.7.gem (100%)
-Temporarily enhancing PATH to include DevKit...
-Building native extensions.  This could take a while...
-Successfully installed rdiscount-2.1.7
-1 gem installed
-Installing ri documentation for rdiscount-2.1.7...
-Installing RDoc documentation for rdiscount-2.1.7...
-
-E:\Programs\DevKit&gt;
-</code></pre><p>然后在站点下的<code>_config.yml</code>文件中加入以下配置</p>
-<pre><code>markdown: rdiscount
-</code></pre><ul>
-<li><h4 id="更换淘宝的源及安装Jekyll"><a href="#更换淘宝的源及安装Jekyll" class="headerlink" title="更换淘宝的源及安装Jekyll"></a><em>更换淘宝的源及安装Jekyll</em></h4></li>
-</ul>
-<p>运行如下命令</p>
-<pre><code>$ gem sources --remove http://rubygems.org/
-$ gem sources -a http://ruby.taobao.org/
-$ gem sources -l
-*** CURRENT SOURCES ***
-
-http://ruby.taobao.org
-# 请确保只有 ruby.taobao.org
-$ gem install jekyll
-</code></pre><p>参考链接：<a href="http://ruby.taobao.org/" target="_blank" rel="external">RubyGems 镜像 - 淘宝网</a></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gem <span class="keyword">install</span> rdiscount <span class="comment">--platform=ruby</span></div></pre></td></tr></table></figure>
+<p>安装成功也能证明之前Ruby和DevKit安装成功。但是因为rdiscount在ruby1.9.2版本上有个bug，安装rdiscount的时候可能会遇到问题，升级到1.9.3可以解决。安装成功结果如下</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">E:\Programs\DevKit&gt;gem install rdiscount -<span class="params">-platform</span>=ruby</div><div class="line">Fetching: rdiscount<span class="number">-2.1</span><span class="number">.7</span>.gem (<span class="number">100</span>%)</div><div class="line">Temporarily enhancing PATH <span class="keyword">to</span> include DevKit<span class="params">...</span></div><div class="line">Building native extensions.  This could <span class="keyword">take</span> a <span class="keyword">while</span><span class="params">...</span></div><div class="line">Successfully installed rdiscount<span class="number">-2.1</span><span class="number">.7</span></div><div class="line"><span class="number">1</span> gem installed</div><div class="line">Installing ri documentation for rdiscount<span class="number">-2.1</span><span class="number">.7</span><span class="params">...</span></div><div class="line">Installing RDoc documentation for rdiscount<span class="number">-2.1</span><span class="number">.7</span><span class="params">...</span></div><div class="line"></div><div class="line">E:\Programs\DevKit&gt;</div></pre></td></tr></table></figure>
+<p>然后在站点下的<code>_config.yml</code>文件中加入以下配置</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">markdown: </span>rdiscount</div></pre></td></tr></table></figure>
+<h4 id="更换淘宝的源及安装Jekyll"><a href="#更换淘宝的源及安装Jekyll" class="headerlink" title="更换淘宝的源及安装Jekyll"></a><em>更换淘宝的源及安装Jekyll</em></h4><p>运行如下命令</p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">$</span> gem sources --remove http:<span class="comment">//rubygems.org/</span></div><div class="line"><span class="symbol">$</span> gem sources -a http:<span class="comment">//ruby.taobao.org/</span></div><div class="line"><span class="symbol">$</span> gem sources -l</div><div class="line"><span class="comment">*** CURRENT SOURCES ***</span></div><div class="line"></div><div class="line">http:<span class="comment">//ruby.taobao.org</span></div><div class="line"># 请确保只有 ruby.taobao.org</div><div class="line"><span class="symbol">$</span> gem install jekyll</div></pre></td></tr></table></figure>
+<p>参考链接：<a href="http://ruby.taobao.org/" target="_blank" rel="external">RubyGems 镜像 - 淘宝网</a></p>
 <p>以上安装最好在取得Win7管理员权限的情况下进行。</p>
-<ul>
-<li><h4 id="运行Jekyll"><a href="#运行Jekyll" class="headerlink" title="运行Jekyll"></a><em>运行Jekyll</em></h4></li>
-</ul>
-<p>本地运行Jekyll命令如下</p>
-<pre><code>jekyll serve --watch #不加--watch则不会检测文件夹内的变化，即修改后需要重新启动jekyll
-</code></pre>]]></content>
+<h4 id="运行Jekyll"><a href="#运行Jekyll" class="headerlink" title="运行Jekyll"></a><em>运行Jekyll</em></h4><p>本地运行Jekyll命令如下</p>
+<figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment">jekyll</span> <span class="comment">serve</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">watch</span> <span class="comment">#不加</span><span class="literal">-</span><span class="literal">-</span><span class="comment">watch则不会检测文件夹内的变化，即修改后需要重新启动jekyll</span></div></pre></td></tr></table></figure>
+]]></content>
       
         <categories>
             
@@ -1154,126 +1164,8 @@ $ gem install jekyll
       <title><![CDATA[Win7脚本快速修改IP]]></title>
       <url>https://corey600.github.io/2013/04/02/change-ip/</url>
       <content type="html"><![CDATA[<p>由于寝室使用闪讯共享上网，时常需要手动修改IP，为了方便快速修改IP，查找资料写了如下的脚本。在Win7环境下将下面代码保存为ip.bat双击运行即可。</p>
-<pre><code>@echo off
-cls 
-rem //设置变量，可以根据你的需要更改
-set Nic1=&quot;本地连接&quot; 
-set Nic2=&quot;无线网络连接&quot;
-rem //以下依次为IP地址、子网掩码、网关、首选DNS、备用DNS 
-set Addr=192.168.137.83
-set Mask=255.255.255.0
-set Gway=192.168.137.1
-set Dns1=8.8.8.8
-set Dns2=8.8.4.4
-rem //以下为第二、三、四个ip和子网掩码、
-set Addr2=192.168.137.133
-set Addr3=192.168.137.183
-set Addr4=192.168.137.233
-set Mask2=255.255.255.0  
-set Mask3=255.255.255.0 
-set Mask4=255.255.255.0
-echo                   IP地址快速修改工具  
-echo ┌────────────────────────┐
-echo │ 1 设置%Nic1%为【静态IP】作为【主机】      │
-echo ├────────────────────────┤
-echo │ 2 设置%Nic1%为【静态IP】作为【客户机】    │
-echo ├────────────────────────┤
-echo │ 3 设置%Nic1%为【动态IP】                  │
-echo ├────────────────────────┤
-echo │ 4 设置%Nic2%为【静态IP】作为【主机】   │
-echo ├────────────────────────┤
-echo │ 5 设置%Nic2%为【静态IP】作为【客户机】 │
-echo ├────────────────────────┤
-echo │ 6 设置%Nic2%为【动态IP】               │
-echo ├────────────────────────┤
-echo │ 7 退出                                         │
-echo └────────────────────────┘ 
-echo －－－请选择项目后回车
-set /p answer=   
-if %answer%==1 goto 1   
-if %answer%==2 goto 2   
-if %answer%==3 goto 3  
-if %answer%==4 goto 4   
-if %answer%==5 goto 5   
-if %answer%==6 goto 6 
-if %answer%==7 goto 7  
-
-:1
-set Nic=%Nic1%
-goto StaticHost
-:2
-set Nic=%Nic1%
-goto StaticClient 
-:3
-set Nic=%Nic1%
-goto Dynamic 
-:4
-set Nic=%Nic2%
-goto StaticHost
-:5
-set Nic=%Nic2%
-goto StaticClient
-:6
-set Nic=%Nic2%
-goto Dynamic
-:7 
-goto end
-
-:StaticHost
-echo 正在设置%Nic%为静态IP主机，请稍等...
-echo. I P 地址 = %Gway%  
-echo. 网关地址 = %Gway%   
-echo. 子网掩码 = %Mask%   
-netsh interface ipv4 set address name=%Nic% source=static addr=%Gway% mask=%Mask% gateway=%Gway% gwmetric=0 &gt;nul  
-echo. 首选 DNS = %Dns1%   
-netsh interface ipv4 set dns name=%Nic% source=static addr=%Dns1% register=PRIMARY &gt;nul   
-echo. 备用 DNS = %Dns2%   
-netsh interface ipv4 add dns name=%Nic% addr=%Dns2% index=2 &gt;nul   
-echo ----    
-echo 设置全部完成! 
-ipconfig /all 
-pause   
-goto end   
-
-:StaticClient 
-echo 正在设置%Nic%为静态IP客户机，请稍等...   
-rem //可以根据你的需要更改   
-echo. I P 地址 = %addr%   
-echo. 网关地址 = %Gway%  
-echo. 子网掩码 = %Mask% 
-netsh interface ipv4 set address name=%Nic% source=static addr=%addr% mask=%Mask% gateway=%Gway% gwmetric=0 &gt;nul  
-echo. 首选 DNS = %Dns1%   
-netsh interface ipv4 set dns name=%Nic% source=static addr=%Dns1% register=PRIMARY &gt;nul   
-echo. 备用 DNS = %Dns2%   
-netsh interface ipv4 add dns name=%Nic% addr=%Dns2% index=2 &gt;nul   
-echo ----   
-rem //下面是设置第二、三、四个ip   
-echo. 第二个IP地址 = %Addr2%   
-echo. 第三个IP地址 = %Addr3%  
-echo. 第四个IP地址 = %Addr4%
-echo. 第二个子网掩码 = %Mask2%
-echo. 第三个子网掩码 = %Mask3%   
-echo. 第四个子网掩码 = %Mask4%    
-netsh interface ipv4 add address %Nic% %Addr2% %Mask2%   
-netsh interface ipv4 add address %Nic% %Addr3% %Mask3% 
-netsh interface ipv4 add address %Nic% %Addr4% %Mask4% 
-echo ----   
-echo 设置全部完成! 
-ipconfig /all 
-pause   
-goto end  
-
-:Dynamic
-echo 正在设置%Nic%为动态IP，请稍等...   
-echo. IP 地址正在从DHCP自动获取...   
-netsh interface ip set address %Nic% dhcp   
-echo. DNS地址正在从DHCP自动获取...   
-netsh interface ip set dns %Nic% dhcp   
-echo ----   
-echo 设置全部完成!   
-pause
-goto end   
-</code></pre>]]></content>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div></pre></td><td class="code"><pre><div class="line">@<span class="built_in">echo</span> off</div><div class="line"><span class="built_in">cls</span></div><div class="line"><span class="comment">rem //设置变量，可以根据你的需要更改</span></div><div class="line"><span class="built_in">set</span> Nic1="本地连接"</div><div class="line"><span class="built_in">set</span> Nic2="无线网络连接"</div><div class="line"><span class="comment">rem //以下依次为IP地址、子网掩码、网关、首选DNS、备用DNS</span></div><div class="line"><span class="built_in">set</span> Addr=<span class="number">192</span>.<span class="number">168</span>.<span class="number">137</span>.<span class="number">83</span></div><div class="line"><span class="built_in">set</span> Mask=<span class="number">255</span>.<span class="number">255</span>.<span class="number">255</span>.<span class="number">0</span></div><div class="line"><span class="built_in">set</span> Gway=<span class="number">192</span>.<span class="number">168</span>.<span class="number">137</span>.<span class="number">1</span></div><div class="line"><span class="built_in">set</span> Dns1=<span class="number">8</span>.<span class="number">8</span>.<span class="number">8</span>.<span class="number">8</span></div><div class="line"><span class="built_in">set</span> Dns2=<span class="number">8</span>.<span class="number">8</span>.<span class="number">4</span>.<span class="number">4</span></div><div class="line"><span class="comment">rem //以下为第二、三、四个ip和子网掩码、</span></div><div class="line"><span class="built_in">set</span> Addr2=<span class="number">192</span>.<span class="number">168</span>.<span class="number">137</span>.<span class="number">133</span></div><div class="line"><span class="built_in">set</span> Addr3=<span class="number">192</span>.<span class="number">168</span>.<span class="number">137</span>.<span class="number">183</span></div><div class="line"><span class="built_in">set</span> Addr4=<span class="number">192</span>.<span class="number">168</span>.<span class="number">137</span>.<span class="number">233</span></div><div class="line"><span class="built_in">set</span> Mask2=<span class="number">255</span>.<span class="number">255</span>.<span class="number">255</span>.<span class="number">0</span></div><div class="line"><span class="built_in">set</span> Mask3=<span class="number">255</span>.<span class="number">255</span>.<span class="number">255</span>.<span class="number">0</span></div><div class="line"><span class="built_in">set</span> Mask4=<span class="number">255</span>.<span class="number">255</span>.<span class="number">255</span>.<span class="number">0</span></div><div class="line"><span class="built_in">echo</span>                   IP地址快速修改工具</div><div class="line"><span class="built_in">echo</span> ┌────────────────────────┐</div><div class="line"><span class="built_in">echo</span> │ <span class="number">1</span> 设置<span class="variable">%Nic1%</span>为【静态IP】作为【主机】      │</div><div class="line"><span class="built_in">echo</span> ├────────────────────────┤</div><div class="line"><span class="built_in">echo</span> │ <span class="number">2</span> 设置<span class="variable">%Nic1%</span>为【静态IP】作为【客户机】    │</div><div class="line"><span class="built_in">echo</span> ├────────────────────────┤</div><div class="line"><span class="built_in">echo</span> │ <span class="number">3</span> 设置<span class="variable">%Nic1%</span>为【动态IP】                  │</div><div class="line"><span class="built_in">echo</span> ├────────────────────────┤</div><div class="line"><span class="built_in">echo</span> │ <span class="number">4</span> 设置<span class="variable">%Nic2%</span>为【静态IP】作为【主机】   │</div><div class="line"><span class="built_in">echo</span> ├────────────────────────┤</div><div class="line"><span class="built_in">echo</span> │ <span class="number">5</span> 设置<span class="variable">%Nic2%</span>为【静态IP】作为【客户机】 │</div><div class="line"><span class="built_in">echo</span> ├────────────────────────┤</div><div class="line"><span class="built_in">echo</span> │ <span class="number">6</span> 设置<span class="variable">%Nic2%</span>为【动态IP】               │</div><div class="line"><span class="built_in">echo</span> ├────────────────────────┤</div><div class="line"><span class="built_in">echo</span> │ <span class="number">7</span> 退出                                         │</div><div class="line"><span class="built_in">echo</span> └────────────────────────┘</div><div class="line"><span class="built_in">echo</span> －－－请选择项目后回车</div><div class="line"><span class="built_in">set</span> /p answer=</div><div class="line"><span class="keyword">if</span> <span class="variable">%answer%</span>==<span class="number">1</span> <span class="keyword">goto</span> <span class="number">1</span></div><div class="line"><span class="keyword">if</span> <span class="variable">%answer%</span>==<span class="number">2</span> <span class="keyword">goto</span> <span class="number">2</span></div><div class="line"><span class="keyword">if</span> <span class="variable">%answer%</span>==<span class="number">3</span> <span class="keyword">goto</span> <span class="number">3</span></div><div class="line"><span class="keyword">if</span> <span class="variable">%answer%</span>==<span class="number">4</span> <span class="keyword">goto</span> <span class="number">4</span></div><div class="line"><span class="keyword">if</span> <span class="variable">%answer%</span>==<span class="number">5</span> <span class="keyword">goto</span> <span class="number">5</span></div><div class="line"><span class="keyword">if</span> <span class="variable">%answer%</span>==<span class="number">6</span> <span class="keyword">goto</span> <span class="number">6</span></div><div class="line"><span class="keyword">if</span> <span class="variable">%answer%</span>==<span class="number">7</span> <span class="keyword">goto</span> <span class="number">7</span></div><div class="line"></div><div class="line">:<span class="number">1</span></div><div class="line"><span class="built_in">set</span> Nic=<span class="variable">%Nic1%</span></div><div class="line"><span class="keyword">goto</span> StaticHost</div><div class="line">:<span class="number">2</span></div><div class="line"><span class="built_in">set</span> Nic=<span class="variable">%Nic1%</span></div><div class="line"><span class="keyword">goto</span> StaticClient</div><div class="line">:<span class="number">3</span></div><div class="line"><span class="built_in">set</span> Nic=<span class="variable">%Nic1%</span></div><div class="line"><span class="keyword">goto</span> Dynamic</div><div class="line">:<span class="number">4</span></div><div class="line"><span class="built_in">set</span> Nic=<span class="variable">%Nic2%</span></div><div class="line"><span class="keyword">goto</span> StaticHost</div><div class="line">:<span class="number">5</span></div><div class="line"><span class="built_in">set</span> Nic=<span class="variable">%Nic2%</span></div><div class="line"><span class="keyword">goto</span> StaticClient</div><div class="line">:<span class="number">6</span></div><div class="line"><span class="built_in">set</span> Nic=<span class="variable">%Nic2%</span></div><div class="line"><span class="keyword">goto</span> Dynamic</div><div class="line">:<span class="number">7</span></div><div class="line"><span class="keyword">goto</span> end</div><div class="line"></div><div class="line">:StaticHost</div><div class="line"><span class="built_in">echo</span> 正在设置<span class="variable">%Nic%</span>为静态IP主机，请稍等...</div><div class="line"><span class="built_in">echo</span>. I P 地址 = <span class="variable">%Gway%</span></div><div class="line"><span class="built_in">echo</span>. 网关地址 = <span class="variable">%Gway%</span></div><div class="line"><span class="built_in">echo</span>. 子网掩码 = <span class="variable">%Mask%</span></div><div class="line">netsh interface ipv4 <span class="built_in">set</span> address name=<span class="variable">%Nic%</span> source=static addr=<span class="variable">%Gway%</span> mask=<span class="variable">%Mask%</span> gateway=<span class="variable">%Gway%</span> gwmetric=<span class="number">0</span> &gt;<span class="built_in">nul</span></div><div class="line"><span class="built_in">echo</span>. 首选 DNS = <span class="variable">%Dns1%</span></div><div class="line">netsh interface ipv4 <span class="built_in">set</span> dns name=<span class="variable">%Nic%</span> source=static addr=<span class="variable">%Dns1%</span> register=PRIMARY &gt;<span class="built_in">nul</span></div><div class="line"><span class="built_in">echo</span>. 备用 DNS = <span class="variable">%Dns2%</span></div><div class="line">netsh interface ipv4 add dns name=<span class="variable">%Nic%</span> addr=<span class="variable">%Dns2%</span> index=<span class="number">2</span> &gt;<span class="built_in">nul</span></div><div class="line"><span class="built_in">echo</span> ----</div><div class="line"><span class="built_in">echo</span> 设置全部完成!</div><div class="line"><span class="built_in">ipconfig</span> /all</div><div class="line"><span class="built_in">pause</span></div><div class="line"><span class="keyword">goto</span> end</div><div class="line"></div><div class="line">:StaticClient</div><div class="line"><span class="built_in">echo</span> 正在设置<span class="variable">%Nic%</span>为静态IP客户机，请稍等...</div><div class="line"><span class="comment">rem //可以根据你的需要更改</span></div><div class="line"><span class="built_in">echo</span>. I P 地址 = <span class="variable">%addr%</span></div><div class="line"><span class="built_in">echo</span>. 网关地址 = <span class="variable">%Gway%</span></div><div class="line"><span class="built_in">echo</span>. 子网掩码 = <span class="variable">%Mask%</span></div><div class="line">netsh interface ipv4 <span class="built_in">set</span> address name=<span class="variable">%Nic%</span> source=static addr=<span class="variable">%addr%</span> mask=<span class="variable">%Mask%</span> gateway=<span class="variable">%Gway%</span> gwmetric=<span class="number">0</span> &gt;<span class="built_in">nul</span></div><div class="line"><span class="built_in">echo</span>. 首选 DNS = <span class="variable">%Dns1%</span></div><div class="line">netsh interface ipv4 <span class="built_in">set</span> dns name=<span class="variable">%Nic%</span> source=static addr=<span class="variable">%Dns1%</span> register=PRIMARY &gt;<span class="built_in">nul</span></div><div class="line"><span class="built_in">echo</span>. 备用 DNS = <span class="variable">%Dns2%</span></div><div class="line">netsh interface ipv4 add dns name=<span class="variable">%Nic%</span> addr=<span class="variable">%Dns2%</span> index=<span class="number">2</span> &gt;<span class="built_in">nul</span></div><div class="line"><span class="built_in">echo</span> ----</div><div class="line"><span class="comment">rem //下面是设置第二、三、四个ip</span></div><div class="line"><span class="built_in">echo</span>. 第二个IP地址 = <span class="variable">%Addr2%</span></div><div class="line"><span class="built_in">echo</span>. 第三个IP地址 = <span class="variable">%Addr3%</span></div><div class="line"><span class="built_in">echo</span>. 第四个IP地址 = <span class="variable">%Addr4%</span></div><div class="line"><span class="built_in">echo</span>. 第二个子网掩码 = <span class="variable">%Mask2%</span></div><div class="line"><span class="built_in">echo</span>. 第三个子网掩码 = <span class="variable">%Mask3%</span></div><div class="line"><span class="built_in">echo</span>. 第四个子网掩码 = <span class="variable">%Mask4%</span></div><div class="line">netsh interface ipv4 add address <span class="variable">%Nic%</span> <span class="variable">%Addr2%</span> <span class="variable">%Mask2%</span></div><div class="line">netsh interface ipv4 add address <span class="variable">%Nic%</span> <span class="variable">%Addr3%</span> <span class="variable">%Mask3%</span></div><div class="line">netsh interface ipv4 add address <span class="variable">%Nic%</span> <span class="variable">%Addr4%</span> <span class="variable">%Mask4%</span></div><div class="line"><span class="built_in">echo</span> ----</div><div class="line"><span class="built_in">echo</span> 设置全部完成!</div><div class="line"><span class="built_in">ipconfig</span> /all</div><div class="line"><span class="built_in">pause</span></div><div class="line"><span class="keyword">goto</span> end</div><div class="line"></div><div class="line">:Dynamic</div><div class="line"><span class="built_in">echo</span> 正在设置<span class="variable">%Nic%</span>为动态IP，请稍等...</div><div class="line"><span class="built_in">echo</span>. IP 地址正在从DHCP自动获取...</div><div class="line">netsh interface ip <span class="built_in">set</span> address <span class="variable">%Nic%</span> dhcp</div><div class="line"><span class="built_in">echo</span>. DNS地址正在从DHCP自动获取...</div><div class="line">netsh interface ip <span class="built_in">set</span> dns <span class="variable">%Nic%</span> dhcp</div><div class="line"><span class="built_in">echo</span> ----</div><div class="line"><span class="built_in">echo</span> 设置全部完成!</div><div class="line"><span class="built_in">pause</span></div><div class="line"><span class="keyword">goto</span> end</div></pre></td></tr></table></figure>
+]]></content>
       
         <categories>
             
@@ -1293,29 +1185,20 @@ goto end
     <entry>
       <title><![CDATA[Vim的Tab使用技巧]]></title>
       <url>https://corey600.github.io/2013/03/29/vim-tab/</url>
-      <content type="html"><![CDATA[<ol>
-<li><p>设定 tab 的位置<br><code>:set tabstop=4</code></p>
-</li>
-<li><p>输入 tab 时自动将其转化为空格<br><code>:set expandtab</code><br>如果此时需要输入真正的 tab，则输入 Ctrl+V, tab，在 Windows 下是 Ctrl+Q, tab</p>
-</li>
-<li><p>将已存在的 tab 都转化为空格<br><code>:retab</code></p>
-</li>
-</ol>
+      <content type="html"><![CDATA[<h4 id="1-设定-tab-的位置"><a href="#1-设定-tab-的位置" class="headerlink" title="1. 设定 tab 的位置"></a>1. 设定 tab 的位置</h4><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:<span class="keyword">set</span> tabstop=<span class="number">4</span></div></pre></td></tr></table></figure>
+<h4 id="2-输入-tab-时自动将其转化为空格"><a href="#2-输入-tab-时自动将其转化为空格" class="headerlink" title="2. 输入 tab 时自动将其转化为空格"></a>2. 输入 tab 时自动将其转化为空格</h4><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:<span class="keyword">set</span> expandtab</div></pre></td></tr></table></figure>
+<p>如果此时需要输入真正的 tab，则输入 Ctrl+V, tab，在 Windows 下是 Ctrl+Q, tab</p>
+<h4 id="3-将已存在的-tab-都转化为空格"><a href="#3-将已存在的-tab-都转化为空格" class="headerlink" title="3. 将已存在的 tab 都转化为空格"></a>3. 将已存在的 tab 都转化为空格</h4><figure class="highlight clojure"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">:retab</span></div></pre></td></tr></table></figure>
 <a id="more"></a>
-<ol>
-<li><p>设定编辑模式下 tab 的视在宽度<br><code>:set softtabstop</code><br>这不改变 tabstop，但让编辑的时候 tab 看起来是指定的宽度，输入 tab 时会插入的 tab 和空格的混合，比如 tabstop=4，softtabstop=10，那么插入 tab 时会将光标移动 10 个字符，可能会是两个 tab 加两个空格，这对 backspace 也有效。</p>
-</li>
-<li><p>解决 shiftwidth 和 tabstop 不等时的麻烦<br><code>:set smarttab</code><br>在行首输入 tab 时插入宽度为 shiftwidth 的空白，在其他地方按 tabstop 和 softtabstop 处理</p>
-</li>
-<li><p>将 tab 显示为可见字符<br><code>:set list listchars=tab:&gt;-</code><br>tab 将被显示为 &gt;—- 的形式</p>
-</li>
-<li><p>只在编辑特定类型的文件时展开tab  </p>
-</li>
-</ol>
-<p>将如下代码加入 ~/.vimrc</p>
-<pre><code>autocmd FileType * set tabstop=4|set shiftwidth=4|set noexpandtab
-autocmd FileType python set tabstop=4|set shiftwidth=4|set expandtab
-</code></pre><p>原文链接：<a href="http://www.cnblogs.com/panliang188/archive/2010/04/20/1715836.html" target="_blank" rel="external">Vim Tab使用技巧</a></p>
+<h4 id="4-设定编辑模式下-tab-的视在宽度"><a href="#4-设定编辑模式下-tab-的视在宽度" class="headerlink" title="4. 设定编辑模式下 tab 的视在宽度"></a>4. 设定编辑模式下 tab 的视在宽度</h4><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:<span class="keyword">set</span> softtabstop</div></pre></td></tr></table></figure>
+<p>这不改变 tabstop，但让编辑的时候 tab 看起来是指定的宽度，输入 tab 时会插入的 tab 和空格的混合，比如 tabstop=4，softtabstop=10，那么插入 tab 时会将光标移动 10 个字符，可能会是两个 tab 加两个空格，这对 backspace 也有效。</p>
+<h4 id="5-解决-shiftwidth-和-tabstop-不等时的麻烦"><a href="#5-解决-shiftwidth-和-tabstop-不等时的麻烦" class="headerlink" title="5. 解决 shiftwidth 和 tabstop 不等时的麻烦"></a>5. 解决 shiftwidth 和 tabstop 不等时的麻烦</h4><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:<span class="keyword">set</span> smarttab</div></pre></td></tr></table></figure>
+<p>在行首输入 tab 时插入宽度为 shiftwidth 的空白，在其他地方按 tabstop 和 softtabstop 处理</p>
+<h4 id="6-将-tab-显示为可见字符"><a href="#6-将-tab-显示为可见字符" class="headerlink" title="6. 将 tab 显示为可见字符"></a>6. 将 tab 显示为可见字符</h4><figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">:<span class="keyword">set</span> <span class="keyword">list</span> listchars=<span class="keyword">ta</span><span class="variable">b:</span>&gt;-</div></pre></td></tr></table></figure>
+<p>tab 将被显示为 &gt;—- 的形式</p>
+<h4 id="7-只在编辑特定类型的文件时展开tab"><a href="#7-只在编辑特定类型的文件时展开tab" class="headerlink" title="7. 只在编辑特定类型的文件时展开tab"></a>7. 只在编辑特定类型的文件时展开tab</h4><p>将如下代码加入 ~/.vimrc</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">autocmd</span> FileType * <span class="keyword">set</span> tabstop=<span class="number">4</span>|<span class="keyword">set</span> <span class="built_in">shiftwidth</span>=<span class="number">4</span>|<span class="keyword">set</span> noexpandtab</div><div class="line"><span class="keyword">autocmd</span> FileType <span class="keyword">python</span> <span class="keyword">set</span> tabstop=<span class="number">4</span>|<span class="keyword">set</span> <span class="built_in">shiftwidth</span>=<span class="number">4</span>|<span class="keyword">set</span> expandtab</div></pre></td></tr></table></figure>
+<p>原文链接：<a href="http://www.cnblogs.com/panliang188/archive/2010/04/20/1715836.html" target="_blank" rel="external">Vim Tab使用技巧</a></p>
 ]]></content>
       
         <categories>
@@ -1340,48 +1223,42 @@ autocmd FileType python set tabstop=4|set shiftwidth=4|set expandtab
 <p>后来得知<a href="https://github.com/" target="_blank" rel="external">Github</a>提供有<a href="http://pages.github.com/" target="_blank" rel="external">GitHub Pages</a>功能，可以搭建静态博客，然后尝试了一下确实满足了博主们的最大自由性，因为博客的所有源码都是由你管理可以随意修改的。当然，最重要的是<a href="https://github.com/" target="_blank" rel="external">Github</a>免费与稳定性并存，有钱购买域名和空间的自然是选择商业的服务器空间更合适，但相对个人作为交流性的博客，<a href="http://pages.github.com/" target="_blank" rel="external">GitHub Pages</a>已经足够了。</p>
 <a id="more"></a>
 <p>当然，静态博客在简约的同时，我还是希望它能够在主题上好看协调一点，而且在写作上如果直接写html文件的话就显得十分吃力，这时候<a href="http://octopress.org/" target="_blank" rel="external">OctoPress</a>和<a href="http://wowubuntu.com/markdown/" target="_blank" rel="external">MarkDown</a>，这两位左右手就该上场了。前者是开源的静态博客系统，后者是是一种轻量级的标记语言。这三者互相搭配再加上第三方评论系统就基本能搞定像本博一样的静态博客了。</p>
-<h3 id="以下是以windows7作为环境的全部安装过程"><a href="#以下是以windows7作为环境的全部安装过程" class="headerlink" title="以下是以windows7作为环境的全部安装过程"></a>以下是以windows7作为环境的全部安装过程</h3><h4 id="一、安装软件和Octopress博客系统"><a href="#一、安装软件和Octopress博客系统" class="headerlink" title="一、安装软件和Octopress博客系统"></a>一、安装软件和Octopress博客系统</h4><p><a href="http://rubyforge.org/frs/download.php/75127/rubyinstaller-1.9.2-p290.exe" target="_blank" rel="external">RubyInstaller下载地址</a>/<a href="https://github.com/downloads/oneclick/rubyinstaller/DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe" target="_blank" rel="external">DevKit下载地址</a>/<a href="https://msysgit.googlecode.com/files/Git-1.7.10-preview20120409.exe" target="_blank" rel="external">Git下载地址</a></p>
+<p><em>以下是以windows7作为环境的全部安装过程</em></p>
+<h4 id="一、安装软件和Octopress博客系统"><a href="#一、安装软件和Octopress博客系统" class="headerlink" title="一、安装软件和Octopress博客系统"></a>一、安装软件和Octopress博客系统</h4><p><a href="http://rubyforge.org/frs/download.php/75127/rubyinstaller-1.9.2-p290.exe" target="_blank" rel="external">RubyInstaller下载地址</a>/<a href="https://github.com/downloads/oneclick/rubyinstaller/DevKit-tdm-32-4.5.2-20111229-1559-sfx.exe" target="_blank" rel="external">DevKit下载地址</a>/<a href="https://msysgit.googlecode.com/files/Git-1.7.10-preview20120409.exe" target="_blank" rel="external">Git下载地址</a></p>
 <p>RubyInstaller的安装界面</p>
 <p><img src="/images/20130228/rbiu.jpg" alt="Alt text"></p>
 <p>DevKit只需解压到一个文件夹</p>
 <p><img src="/images/20130228/dkiu.jpg" alt="Alt text"></p>
 <p>然后启动Ruby命令框，用CD进入存放DevKit的目录，执行以下命令</p>
-<pre><code>ruby dk.rb init
-ruby dk.rb install
-</code></pre><p><img src="/images/20130228/dkiu2.jpg" alt="Alt text"></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ruby dk<span class="selector-class">.rb</span> init</div><div class="line">ruby dk<span class="selector-class">.rb</span> install</div></pre></td></tr></table></figure>
+<p><img src="/images/20130228/dkiu2.jpg" alt="Alt text"></p>
 <p>Git安装只需按照提示默认点击下一步，在“Configuring the line ending conversions”界面选择换行格式，选择“Checkout as-is, commit Unix-style line endings”(参考链接：<a href="http://www.cnblogs.com/sunny5156/archive/2012/10/23/2735799.html" target="_blank" rel="external">Win7上Git安装及配置过程</a>)，如下图</p>
 <p><img src="/images/20130228/gitiu.jpg" alt="Alt text"></p>
 <p>安装Octopress前要改变一个软件更新源，运行命令</p>
-<pre><code>gem sources -a http://ruby.taobao.org/
-gem sources -r http://rubygems.org/
-gem sources -l
-</code></pre><p><img src="/images/20130228/ociu.jpg" alt="Alt text"></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">gem sources -a <span class="string">http:</span><span class="comment">//ruby.taobao.org/</span></div><div class="line">gem sources -r <span class="string">http:</span><span class="comment">//rubygems.org/</span></div><div class="line">gem sources -l</div></pre></td></tr></table></figure>
+<p><img src="/images/20130228/ociu.jpg" alt="Alt text"></p>
 <p>安装Octopress到D:\Blog(参考链接：<a href="http://octopress.org/docs/setup/" target="_blank" rel="external">Octopress官方安装帮助</a>)，打开Git Bash，运行命令</p>
-<pre><code>git clone git://github.com/imathis/octopress.git /d/Blog
-</code></pre><p><img src="/images/20130228/ociu2.jpg" alt="Alt text"></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git clone git:<span class="regexp">//gi</span>thub.com<span class="regexp">/imathis/</span>octopress.git <span class="regexp">/d/</span>Blog</div></pre></td></tr></table></figure>
+<p><img src="/images/20130228/ociu2.jpg" alt="Alt text"></p>
 <p>打开Octopress安装目录下的<code>D:\Blog\Gemfile</code>，将第一行的source改成国内淘宝的<code>http://ruby.taobao.org/</code></p>
 <p><img src="/images/20130228/ociu3.jpg" alt="Alt text"></p>
 <p>进入Octopress安装目录，安装bundler，运行命令</p>
-<pre><code>gem install bundler
-bundle install
-</code></pre><p><img src="/images/20130228/ociu4.jpg" alt="Alt text"></p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">gem <span class="keyword">install </span><span class="keyword">bundler</span></div><div class="line"><span class="keyword">bundle </span><span class="keyword">install</span></div></pre></td></tr></table></figure>
+<p><img src="/images/20130228/ociu4.jpg" alt="Alt text"></p>
 <p>安装Octopress默认的主题，运行命令</p>
-<pre><code>rake install
-</code></pre><p><img src="/images/20130228/ociu5.jpg" alt="Alt text"></p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rake <span class="keyword">install</span></div></pre></td></tr></table></figure>
+<p><img src="/images/20130228/ociu5.jpg" alt="Alt text"></p>
 <p>最后是生成和预览博客，运行命令</p>
-<pre><code>rake generate
-rake preview
-</code></pre><p><img src="/images/20130228/ociu6.jpg" alt="Alt text"></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">rake <span class="keyword">generate</span></div><div class="line">rake preview</div></pre></td></tr></table></figure>
+<p><img src="/images/20130228/ociu6.jpg" alt="Alt text"></p>
 <p>然后浏览器打开页面<code>http://localhost:4000/</code>就可以预览博客了(参考链接：<a href="http://www.freehao123.com/octopress/" target="_blank" rel="external">用Octopress免费静态博客系统在Github免费空间上搭建个人网站</a>)。</p>
 <h4 id="二、更改环境变量以支持生成有中文的文章"><a href="#二、更改环境变量以支持生成有中文的文章" class="headerlink" title="二、更改环境变量以支持生成有中文的文章"></a>二、更改环境变量以支持生成有中文的文章</h4><p>打开计算机–属性–高级系统设置–环境变量，新增<code>LANG</code>和<code>LC_ALL</code>，值都是<code>zh_CN.UTF-8</code>，完成后确定保存</p>
 <p><img src="/images/20130228/hj.jpg" alt="Alt text"></p>
 <h4 id="三、将博客提交到Github"><a href="#三、将博客提交到Github" class="headerlink" title="三、将博客提交到Github"></a>三、将博客提交到Github</h4><p>先申请一个<a href="https://github.com/" target="_blank" rel="external">Github</a>账号，再点击右上角用户名旁边的create a new repo创建一个项目(参考链接：<a href="http://www.freehao123.com/github-pages/" target="_blank" rel="external">免费开源Github Pages空间可绑域名搭建个人博客存放图片文件</a>)，注意repository name必须是<code>你的用户名.github.com</code>，这样最后才能直接用<code>你的用户名.github.com</code>这个二级域名直接访问你的页面</p>
 <p><img src="/images/20130228/gh.jpg" alt="Alt text"></p>
 <p>打开git bash，依次运行下列命令</p>
-<pre><code>git config --global user.name &quot;用户名&quot;
-git config --global user.email &quot;邮箱&quot;
-git config --global credential.helper cache
-</code></pre><p><img src="/images/20130228/gh2.jpg" alt="Alt text"></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git config --global user<span class="selector-class">.name</span> <span class="string">"用户名"</span></div><div class="line">git config --global user<span class="selector-class">.email</span> <span class="string">"邮箱"</span></div><div class="line">git config --global credential<span class="selector-class">.helper</span> cache</div></pre></td></tr></table></figure>
+<p><img src="/images/20130228/gh2.jpg" alt="Alt text"></p>
 <p>如入命令<code>cd ~/.ssh</code>看看本地有没有ssh keys。如果没有的话运行命令<code>ssh-keygen -t rsa -C &quot;邮箱&quot;</code>来创建SSH Keys。然后会要你选择保存的位置，直接回车就可。输入密码后创建成功。然后在你刚才保存的文件路径中产生一个id_rsa.pub文件。</p>
 <p><img src="/images/20130228/gh3.jpg" alt="Alt text"></p>
 <p>用记事本打开id_rsa.pub，复制里面的东西粘贴到Github项目的SSH Keys中</p>
@@ -1389,48 +1266,35 @@ git config --global credential.helper cache
 <p>输入命令<code>ssh -T git@github.com</code>，输入密码后测试是否可以成功连接。如下图就表明连接成功了</p>
 <p><img src="/images/20130228/gh5.jpg" alt="Alt text"></p>
 <p>最后进入博客安装目录<code>D:\Blog</code>运行如下命令，再打开你的Github的二级域名就可以看到刚刚提交的Octopress博客了</p>
-<pre><code>rake setup_github_pages
-rake generate
-rake deploy
-</code></pre><p><img src="/images/20130228/gh6.jpg" alt="Alt text"></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">rake setup_github_pages</div><div class="line">rake <span class="keyword">generate</span></div><div class="line">rake deploy</div></pre></td></tr></table></figure>
+<p><img src="/images/20130228/gh6.jpg" alt="Alt text"></p>
 <h4 id="四、新建和发布页面"><a href="#四、新建和发布页面" class="headerlink" title="四、新建和发布页面"></a>四、新建和发布页面</h4><p>发布一个日志前，先在博客目录<code>D:\Blog\source\_posts\</code>中生成一个MD文件，类似<code>2013-03-10-title.markdown</code>，是日志的编辑文件。运行命令</p>
-<pre><code>rake new_post[&quot;title&quot;]
-</code></pre><p>如果想要新建一个页面，则可以运行命令</p>
-<pre><code>rake new_page[&quot;about&quot;]
-</code></pre><p>编辑MD文件需要使用markdown语法(参考链接：<a href="http://wowubuntu.com/markdown/" target="_blank" rel="external">Markdown 语法说明</a>)。<br>文章编辑完成后，生成和发布则运行命令</p>
-<pre><code>rake generate
-rake deploy
-</code></pre><p>本地预览命令。</p>
-<pre><code>rake preview
-</code></pre><p>退出预览命令是<br><code>Ctrl+C</code></p>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rake <span class="keyword">new</span><span class="type">_post</span>[<span class="string">"title"</span>]</div></pre></td></tr></table></figure>
+<p>如果想要新建一个页面，则可以运行命令</p>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rake <span class="keyword">new</span><span class="type">_page</span>[<span class="string">"about"</span>]</div></pre></td></tr></table></figure>
+<p>编辑MD文件需要使用markdown语法(参考链接：<a href="http://wowubuntu.com/markdown/" target="_blank" rel="external">Markdown 语法说明</a>)。<br>文章编辑完成后，生成和发布则运行命令</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">rake <span class="keyword">generate</span></div><div class="line">rake deploy</div></pre></td></tr></table></figure>
+<p>本地预览命令。</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">rake preview</span></div></pre></td></tr></table></figure>
+<p>退出预览命令是<code>Ctrl+C</code></p>
 <h4 id="五、安装主题"><a href="#五、安装主题" class="headerlink" title="五、安装主题"></a>五、安装主题</h4><p>我现在用的主题是<a href="http://blog.justin.kelly.org.au/octopress-theme/" target="_blank" rel="external">justin-kelly</a>(<a href="https://github.com/wallace/justin-kelly-theme" target="_blank" rel="external">Github源码</a>)，安装方法是先进入博客目录<code>D:\Blog\</code>然后运行命令</p>
-<pre><code>git clone https://github.com/wallace/justin-kelly-theme.git .themes/justin-kelly-theme
-rake install[&apos;justin-kelly-theme&apos;]
-rake generate
-</code></pre><p>其他不错的主题：<a href="http://zespia.tw/Octopress-Theme-Slash/index_tw.html#overview" target="_blank" rel="external">slash</a>/<a href="http://panks.me/blog/2013/01/new-octopress-theme-fabric/" target="_blank" rel="external">Fabric</a>/<a href="https://github.com/rastersize/BlogTheme" target="_blank" rel="external">BlogTheme</a>/<a href="https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes" target="_blank" rel="external">官方推荐</a></p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git clone https:<span class="comment">//github.com/wallace/justin-kelly-theme.git .themes/justin-kelly-theme</span></div><div class="line">rake install['justin-kelly-theme']</div><div class="line">rake <span class="keyword">generate</span></div></pre></td></tr></table></figure>
+<p>其他不错的主题：<a href="http://zespia.tw/Octopress-Theme-Slash/index_tw.html#overview" target="_blank" rel="external">slash</a>/<a href="http://panks.me/blog/2013/01/new-octopress-theme-fabric/" target="_blank" rel="external">Fabric</a>/<a href="https://github.com/rastersize/BlogTheme" target="_blank" rel="external">BlogTheme</a>/<a href="https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes" target="_blank" rel="external">官方推荐</a></p>
 <h4 id="六、添加分享到微博按钮"><a href="#六、添加分享到微博按钮" class="headerlink" title="六、添加分享到微博按钮"></a>六、添加分享到微博按钮</h4><p>在文件<code>source/_includes/post/sharing.html</code>中加入代码，效果如下</p>
 <figure class="highlight django"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"sharing"</span>&gt;</span></span></div><div class="line">  <span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> site.weibo_share %&#125;</span><span class="xml"></span></div><div class="line">  <span class="tag">&lt;<span class="name">span</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">iframe</span> </span></div><div class="line">    <span class="attr">width</span>=<span class="string">"86"</span> </div><div class="line">    <span class="attr">scrolling</span>=<span class="string">"no"</span> </div><div class="line">    <span class="attr">height</span>=<span class="string">"16"</span> </div><div class="line">    <span class="attr">frameborder</span>=<span class="string">"0"</span> </div><div class="line">    <span class="attr">src</span>=</div><div class="line">      <span class="string">"http://hits.sinajs.cn/A1/weiboshare.html?url=</span><span class="template-variable">&#123;&#123; site.url &#125;&#125;</span><span class="xml"><span class="tag"><span class="string"></span></span></span><span class="template-variable">&#123;&#123; page.url &#125;&#125;</span><span class="xml"><span class="tag"><span class="string">&amp;amp;type=6&amp;amp;</span></span></span><span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> site.weibo_uid %&#125;</span><span class="xml"><span class="tag"><span class="string">ralateUid=</span></span></span><span class="template-variable">&#123;&#123; site.weibo_uid &#125;&#125;</span><span class="xml"><span class="tag"><span class="string">&amp;amp;</span></span></span><span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"><span class="tag"><span class="string">language=zh_cn"</span> <span class="attr">allowtransparency</span>=<span class="string">"true"</span>&gt;</span></span></div><div class="line">  <span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">span</span>&gt;</span></div><div class="line">  <span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></div><div class="line">  <span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> site.twitter_tweet_button %&#125;</span><span class="xml"></span></div><div class="line">  <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"http://twitter.com/share"</span> <span class="attr">class</span>=<span class="string">"twitter-share-button"</span> <span class="attr">data-url</span>=<span class="string">"</span></span><span class="template-variable">&#123;&#123; site.url &#125;&#125;</span><span class="xml"><span class="tag"><span class="string"></span></span></span><span class="template-variable">&#123;&#123; page.url &#125;&#125;</span><span class="xml"><span class="tag"><span class="string">"</span> <span class="attr">data-via</span>=<span class="string">"</span></span></span><span class="template-variable">&#123;&#123; site.twitter_user &#125;&#125;</span><span class="xml"><span class="tag"><span class="string">"</span> <span class="attr">data-counturl</span>=<span class="string">"</span></span></span><span class="template-variable">&#123;&#123; site.url &#125;&#125;</span><span class="xml"><span class="tag"><span class="string"></span></span></span><span class="template-variable">&#123;&#123; page.url &#125;&#125;</span><span class="xml"><span class="tag"><span class="string">"</span> &gt;</span>Tweet<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span></div><div class="line">  <span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></div><div class="line">  <span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> site.google_plus_one %&#125;</span><span class="xml"></span></div><div class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"g-plusone"</span> <span class="attr">data-size</span>=<span class="string">"</span></span><span class="template-variable">&#123;&#123; site.google_plus_one_size &#125;&#125;</span><span class="xml"><span class="tag"><span class="string">"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></div><div class="line">  <span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></div><div class="line">  <span class="template-tag">&#123;% <span class="name"><span class="name">if</span></span> site.facebook_like %&#125;</span><span class="xml"></span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"fb-like"</span> <span class="attr">data-send</span>=<span class="string">"true"</span> <span class="attr">data-width</span>=<span class="string">"450"</span> <span class="attr">data-show-faces</span>=<span class="string">"false"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">  <span class="template-tag">&#123;% <span class="name"><span class="name">endif</span></span> %&#125;</span><span class="xml"></span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div></pre></td></tr></table></figure>
 <p>由于Liquid语法的关系，如果代码显示不完全，查看如下截图</p>
 <p><img src="/images/20130228/dm.jpg" alt="Alt text"></p>
 <p>然后在博客根目录下的配置文件<code>_config.yml</code>文件中加入代码</p>
-<pre><code># Weibo
-# Please refer to http://weibo.com/tool/weiboshow to get your uid and verifier 
-weibo_uid: 1234567890       # your uid
-weibo_verifier:    abc12ef3    # your verifier
-weibo_fansline: 0   # How many lines for the fan list
-weibo_show: true    # Whether you want your weibo content to be shown
-weibo_pic: true     # Whether you want the pictures in weibo to be shown
-weibo_skin: 10      # Please refer to http://weibo.com/tool/weiboshow
-weibo_share: true   # Whether show the sharing button
-</code></pre><p>其中uid和verifier需要去新浪<code>http://weibo.com/tool/weiboshow</code>获取。<code>rake generate</code>生成后就可以预览了。(参考链接：<a href="http://programus.github.com/blog/2012/03/04/share-weibo-button/" target="_blank" rel="external">为Octopress追加[分享到微博]按钮</a>/<a href="http://clark1231.iteye.com/blog/1553939" target="_blank" rel="external">增加微博的侧边栏</a>)</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Weibo</span></div><div class="line"><span class="comment"># Please refer to http://weibo.com/tool/weiboshow to get your uid and verifier</span></div><div class="line"><span class="attr">weibo_uid:</span> <span class="number">1234567890</span>       <span class="comment"># your uid</span></div><div class="line"><span class="attr">weibo_verifier:</span>	<span class="string">abc12ef3</span>    <span class="comment"># your verifier</span></div><div class="line"><span class="attr">weibo_fansline:</span> <span class="number">0</span>   <span class="comment"># How many lines for the fan list</span></div><div class="line"><span class="attr">weibo_show:</span> <span class="literal">true</span>    <span class="comment"># Whether you want your weibo content to be shown</span></div><div class="line"><span class="attr">weibo_pic:</span> <span class="literal">true</span>     <span class="comment"># Whether you want the pictures in weibo to be shown</span></div><div class="line"><span class="attr">weibo_skin:</span> <span class="number">10</span>      <span class="comment"># Please refer to http://weibo.com/tool/weiboshow</span></div><div class="line"><span class="attr">weibo_share:</span> <span class="literal">true</span>   <span class="comment"># Whether show the sharing button</span></div></pre></td></tr></table></figure>
+<p>其中uid和verifier需要去新浪<code>http://weibo.com/tool/weiboshow</code>获取。<code>rake generate</code>生成后就可以预览了。(参考链接：<a href="http://programus.github.com/blog/2012/03/04/share-weibo-button/" target="_blank" rel="external">为Octopress追加[分享到微博]按钮</a>/<a href="http://clark1231.iteye.com/blog/1553939" target="_blank" rel="external">增加微博的侧边栏</a>)</p>
 <p>然后再推荐<a href="http://share.baidu.com/" target="_blank" rel="external">百度分享工具</a>，获取代码添加到<code>source/_includes/post/sharing.html</code>中即可，当然也可以分析一下代码，自己改写成如以上分享到微博一样的标准形式。</p>
 <h4 id="七、代码高亮"><a href="#七、代码高亮" class="headerlink" title="七、代码高亮"></a>七、代码高亮</h4><p>修改<code>_config.yml</code>设置<code>pygments: true</code>，同时Win7上需要安装和配置好<a href="http://www.python.org/download/" target="_blank" rel="external">Python</a>。(参考链接：<a href="http://zyzhang.github.com/blog/2012/08/31/highlight-with-Jekyll-and-Pygments/" target="_blank" rel="external">用Jekyll和Pygments配置代码高亮</a>)</p>
 <h4 id="八、部分界面修改"><a href="#八、部分界面修改" class="headerlink" title="八、部分界面修改"></a>八、部分界面修改</h4><p>头部导航菜单的修改可以打开编辑<code>source/_includes/custom/navigation.html</code>(参考链接：<a href="http://linmumu.me/octopress-theme-template.html" target="_blank" rel="external">Octopress 模板篇</a>)。</p>
 <p>将最新评论添加到侧边栏，首先新建文件<code>source/_includes/custom/asides/recent_comment.html</code></p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">section</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">h1</span>&gt;</span>Recent Comments<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"http://corey600.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=1&amp;avatar_size=32&amp;excerpt_length=200"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">section</span>&gt;</span></div></pre></td></tr></table></figure>
 <p>然后在配置文件<code>/_config.yml</code>中的<code>default_asides</code>或者<code>blog_index_asides</code>或者<code>post_asides</code>或者<code>page_asides</code>中添加一项<code>custom/asides/recent_comment.html</code>，例如我的配置</p>
-<pre><code>blog_index_asides: [custom/asides/links.html, asides/recent_posts.html, custom/asides/recent_comment.html]
-</code></pre><p>开启disqus评论系统只需在配置文件<code>/_config.yml</code>中设置好用户名，当然如果要尝试其他第三方评论系统可以参考链接：<a href="http://ihavanna.org/Internet/2013-02/add-duoshuo-commemt-system-into-octopress.html" target="_blank" rel="external">为 Octopress 添加多说评论系统</a>。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">blog_index_asides: [custom/asides/links<span class="selector-class">.html</span>, asides/recent_posts<span class="selector-class">.html</span>, custom/asides/recent_comment.html]</div></pre></td></tr></table></figure>
+<p>开启disqus评论系统只需在配置文件<code>/_config.yml</code>中设置好用户名，当然如果要尝试其他第三方评论系统可以参考链接：<a href="http://ihavanna.org/Internet/2013-02/add-duoshuo-commemt-system-into-octopress.html" target="_blank" rel="external">为 Octopress 添加多说评论系统</a>。</p>
 ]]></content>
       
         <categories>
@@ -1455,29 +1319,11 @@ weibo_share: true   # Whether show the sharing button
       <url>https://corey600.github.io/2013/02/07/ubuntu-sublime-text-2-g-plus-plus-and-python/</url>
       <content type="html"><![CDATA[<p>如果原本系统已经安装了g++和python2.7，并且配置好了环境变量，那么sublime本身默认的配置文件已经能够满足要求了。但是对于我这个用惯了codeblock的人来说，运行时不能在终端输入是无法忍受的。那么我就希望将sublime配置成codeblock那样跳出终端窗口来显示输出，并且能够输入。不多说，先贴出配置文件。</p>
 <p>g++配置:</p>
-<pre><code>{
-    &quot;cmd&quot;: [&quot;g++&quot;, &quot;${file}&quot;, &quot;-o&quot;, &quot;${file_path}/${file_base_name}&quot;],
-    &quot;file_regex&quot;: &quot;^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$&quot;,
-    &quot;working_dir&quot;: &quot;${file_path}&quot;,
-    &quot;selector&quot;: &quot;source.c, source.c++&quot;,
-
-    &quot;variants&quot;:
-    [
-        {
-            &quot;name&quot;: &quot;Run&quot;,
-            &quot;cmd&quot;:[&quot;x-terminal-emulator&quot;, &quot;-x&quot;, &quot;bash&quot;, &quot;-c&quot;, &quot;g++ &apos;${file}&apos; -o &apos;${file_path}/${file_base_name}&apos; &amp;&amp; &apos;${file_path}/${file_base_name}&apos; ;read -n1 -p &apos;press any key to continue.&apos;&quot;]
-        }
-    ]
-}
-</code></pre><a id="more"></a>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    <span class="attr">"cmd"</span>: [<span class="string">"g++"</span>, <span class="string">"$&#123;file&#125;"</span>, <span class="string">"-o"</span>, <span class="string">"$&#123;file_path&#125;/$&#123;file_base_name&#125;"</span>],</div><div class="line">    <span class="attr">"file_regex"</span>: <span class="string">"^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$"</span>,</div><div class="line">    <span class="attr">"working_dir"</span>: <span class="string">"$&#123;file_path&#125;"</span>,</div><div class="line">    <span class="attr">"selector"</span>: <span class="string">"source.c, source.c++"</span>,</div><div class="line"></div><div class="line">    <span class="attr">"variants"</span>:</div><div class="line">    [</div><div class="line">        &#123;</div><div class="line">            <span class="attr">"name"</span>: <span class="string">"Run"</span>,</div><div class="line">            <span class="attr">"cmd"</span>:[<span class="string">"x-terminal-emulator"</span>, <span class="string">"-x"</span>, <span class="string">"bash"</span>, <span class="string">"-c"</span>, <span class="string">"g++ '$&#123;file&#125;' -o '$&#123;file_path&#125;/$&#123;file_base_name&#125;' &amp;&amp; '$&#123;file_path&#125;/$&#123;file_base_name&#125;' ;read -n1 -p 'press any key to continue.'"</span>]</div><div class="line">        &#125;</div><div class="line">    ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<a id="more"></a>
 <p>python配置:</p>
-<pre><code>{
-    &quot;cmd&quot;:[&quot;x-terminal-emulator&quot;, &quot;-x&quot;, &quot;bash&quot;, &quot;-c&quot;, &quot;python -u &apos;${file}&apos; ;read -n1 -p &apos;press any key to continue.&apos;&quot;],
-    //&quot;cmd&quot;: [&quot;python&quot;, &quot;-u&quot;, &quot;$file&quot;],
-    &quot;file_regex&quot;: &quot;^[ ]*File \&quot;(...*?)\&quot;, line ([0-9]*)&quot;,
-    &quot;selector&quot;: &quot;source.python&quot;
-}
-</code></pre><p>说明：<br>其中命令<code>x-terminal-emulator -x</code>是实现了跳出新的窗口，由于我用的是linux-mint，默认桌面环境是mate，如果是gnome那么命令可能应该是<code>gnome-terminal -x</code>。</p>
+<figure class="highlight clojure"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    <span class="string">"cmd"</span>:[<span class="string">"x-terminal-emulator"</span>, <span class="string">"-x"</span>, <span class="string">"bash"</span>, <span class="string">"-c"</span>, <span class="string">"python -u '$&#123;file&#125;' ;read -n1 -p 'press any key to continue.'"</span>],</div><div class="line">    //<span class="string">"cmd"</span>: [<span class="string">"python"</span>, <span class="string">"-u"</span>, <span class="string">"$file"</span>],</div><div class="line">    <span class="string">"file_regex"</span>: <span class="string">"^[ ]*File \"(...*?)\", line ([0-9]*)"</span>,</div><div class="line">    <span class="string">"selector"</span>: <span class="string">"source.python"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>说明：<br>其中命令<code>x-terminal-emulator -x</code>是实现了跳出新的窗口，由于我用的是linux-mint，默认桌面环境是mate，如果是gnome那么命令可能应该是<code>gnome-terminal -x</code>。</p>
 <p>而命令<code>;read -n1 -p ”press any key to continue.“</code>则是为了实现窗口在输出完毕后不立即关闭，而是再显示press any key to continue.并由你按下enter时窗口关闭。这里的any key其实并不是任意键，目前测试只接受英文字符和enter。</p>
 <p>其他命令就不多说了，可以参考sublime的原有配置或者参考官网。</p>
 ]]></content>
@@ -1507,165 +1353,25 @@ weibo_share: true   # Whether show the sharing button
       <title><![CDATA[Linux下用Dnw烧写bin镜像(Ubuntu for TQ2440)]]></title>
       <url>https://corey600.github.io/2012/09/22/linux-dnw-bin-ubuntu-for-tq2440/</url>
       <content type="html"><![CDATA[<p>我们要用到的工具是C-kermit 和 dnw2。其中C-kermit是串口连接程序。而dnw2是用来向开发板下载程序的。<br>首先我们安装kermit，我们可以使用<code>#sudo apt-get install ckermit</code>来安装kermit。</p>
-<p>下载完成之后还要对其进行配置。<code>#sudo vim /etc/kermit/kermrc</code></p>
+<p>下载完成之后还要对其进行配置。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-id">#sudo</span> vim /etc/kermit/kermrc</div></pre></td></tr></table></figure>
 <p><img src="/images/20120922/1.jpg" alt="Alt text"></p>
 <a id="more"></a>
-<p>set line /dev/ttyUSB0 (这里填写通过命令#dmesg看到的设备名。上图中红线部分。attached to ttyUSB0 说明已经附加到了ttyUSB0这个设备上了。)</p>
-<pre><code>set speed 115200
-
-set carrier-watch off
-
-set handshake none
-
-set flow-control none
-
-robust
-
-set file type bin
-
-set file name lit
-
-set rec pack 1000
-
-set send pack 1000
-
-set window 5
-</code></pre><p>配置完以后的样子</p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">set</span> line /dev/<span class="comment">ttyUSB0 (</span>这里填写通过命令<span class="comment">#dmesg</span>看到的设备名。上图中红线部分。<span class="comment">attached to ttyUSB0</span> 说明已经附加到了<span class="comment">ttyUSB0</span>这个设备上了。<span class="comment">)</span></div><div class="line"><span class="keyword">set</span> <span class="comment">speed 115200</span></div><div class="line"><span class="keyword">set</span> <span class="comment">carrier-watch off</span></div><div class="line"><span class="keyword">set</span> <span class="comment">handshake none</span></div><div class="line"><span class="keyword">set</span> <span class="comment">flow-control none</span></div><div class="line">robust</div><div class="line"><span class="keyword">set</span> <span class="comment">file type bin</span></div><div class="line"><span class="keyword">set</span> <span class="comment">file name lit</span></div><div class="line"><span class="keyword">set</span> <span class="comment">rec pack 1000</span></div><div class="line"><span class="keyword">set</span> <span class="comment">send pack 1000</span></div><div class="line"><span class="keyword">set</span> <span class="comment">window 5</span></div></pre></td></tr></table></figure>
+<p>配置完以后的样子</p>
 <p><img src="/images/20120922/2.jpg" alt="Alt text"></p>
 <p>红色方框内的内容为添加内容。</p>
-<p>使用以下命令打开kermit：<code>#sudo kermit</code></p>
-<p>使用以下命令链接：<code>&gt;connect</code></p>
+<p>使用以下命令打开kermit：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-id">#sudo</span> kermit</div></pre></td></tr></table></figure>
+<p>使用以下命令链接：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&gt;<span class="built_in">connect</span></div></pre></td></tr></table></figure>
 <p>就可以使用串口了。</p>
 <p>切换：按下Ctrl+\ ,再按c 就跳回kermit。跳回串口控制，可以输入c,即connect命令。</p>
 <p><img src="/images/20120922/3.jpg" alt="Alt text"></p>
 <p>上图是使用kermit连接开发板。</p>
 <p>接着说一下dnw2的使用。先把以下某大神写的代码保存成文件dnw2.c</p>
-<pre><code>#include &lt;stdio.h&gt;
-#include &lt;usb.h&gt;
-#include &lt;errno.h&gt;
-#include &lt;sys/stat.h&gt;
-#include &lt;fcntl.h&gt;
-#include &lt;unistd.h&gt;
-
-#define QQ2440_SECBULK_IDVENDOR        0x5345
-#define QQ2440_SECBULK_IDPRODUCT    0x1234
-
-struct usb_dev_handle * open_port() {
-    struct usb_bus *busses, *bus;
-
-    usb_init();
-    usb_find_busses();
-    usb_find_devices();
-
-    busses = usb_get_busses();
-    for (bus = busses; bus; bus = bus-&gt;next) {
-        struct usb_device *dev;
-        for (dev = bus-&gt;devices; dev; dev = dev-&gt;next) {
-            printf(&quot;idVendor:0x%x\t,ipProduct:0x%x\n&quot;,
-                    dev-&gt;descriptor.idVendor, dev-&gt;descriptor.idProduct);
-            if (QQ2440_SECBULK_IDVENDOR == dev-&gt;descriptor.idVendor
-                    &amp;&amp; QQ2440_SECBULK_IDPRODUCT == dev-&gt;descriptor.idProduct) {
-                printf(&quot;Target usb device found!\n&quot;);
-                struct usb_dev_handle *hdev = usb_open(dev);
-                if (!hdev) {
-                    perror(&quot;Cannot open device&quot;);
-                } else {
-                    if (0 != usb_claim_interface(hdev, 0)) {
-                        perror(&quot;Cannot claim interface&quot;);
-                        usb_close(hdev);
-                        hdev = NULL;
-                    }
-                }
-                return hdev;
-            }
-        }
-    }
-
-    printf(&quot;Target usb device not found!\n&quot;);
-
-    return NULL;
-}
-
-void usage() {
-    printf(&quot;Usage: dnw2 &lt;file&gt;\n\n&quot;);
-}
-
-unsigned char* prepare_write_buf(char *filename, unsigned int *len) {
-    unsigned char *write_buf = NULL;
-    struct stat fs;
-
-    int fd = open(filename, O_RDONLY);
-    if (-1 == fd) {
-        perror(&quot;Cannot open file&quot;);
-        return NULL;
-    }
-    if (-1 == fstat(fd, &amp;fs)) {
-        perror(&quot;Cannot get file size&quot;);
-        goto error;
-    }
-    write_buf = (unsigned char*) malloc(fs.st_size + 10);
-    if (NULL == write_buf) {
-        perror(&quot;malloc failed&quot;);
-        goto error;
-    }
-
-    if (fs.st_size != read(fd, write_buf + 8, fs.st_size)) {
-        perror(&quot;Reading file failed&quot;);
-        goto error;
-    }
-
-    printf(&quot;Filename : %s\n&quot;, filename);
-    printf(&quot;Filesize : %d bytes\n&quot;, fs.st_size);
-
-    *((u_int32_t*) write_buf) = 0x30000000; //download address
-    *((u_int32_t*) write_buf + 1) = fs.st_size + 10; //download size;
-
-    *len = fs.st_size + 10;
-    return write_buf;
-    error: if (fd != -1)
-        close(fd);
-    if (NULL != write_buf)
-        free(write_buf);
-    fs.st_size = 0;
-    return NULL;
-}
-
-int main(int argc, char *argv[]) {
-    if (2 != argc) {
-        usage();
-        return 1;
-    }
-
-    struct usb_dev_handle *hdev = open_port();
-    if (!hdev) {
-        return 1;
-    }
-
-    unsigned int len = 0;
-    unsigned char* write_buf = prepare_write_buf(argv[1], &amp;len);
-    if (NULL == write_buf)
-        return 1;
-
-    unsigned int remain = len;
-    unsigned int towrite;
-    printf(&quot;Writing data ...\n&quot;);
-    while (remain) {
-        towrite = remain &gt; 512 ? 512 : remain;
-        if (towrite != usb_bulk_write(hdev, 0x03, write_buf + (len - remain),
-                towrite, 3000)) {
-            perror(&quot;usb_bulk_write failed&quot;);
-            break;
-        }
-        remain -= towrite;
-        printf(&quot;\r%d%\t %d bytes     &quot;, (len - remain) * 100 / len, len
-                - remain);
-        fflush(stdout);
-    }
-    if (0 == remain)
-        printf(&quot;Done!\n&quot;);
-    return 0;
-}
-</code></pre><p>然后安装 libusb 库<code>#sudo apt-get install libusb-dev</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;usb.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> QQ2440_SECBULK_IDVENDOR        0x5345</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> QQ2440_SECBULK_IDPRODUCT    0x1234</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">struct</span> usb_dev_handle * <span class="title">open_port</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">struct</span> usb_bus *busses, *bus;</div><div class="line"></div><div class="line">    usb_init();</div><div class="line">    usb_find_busses();</div><div class="line">    usb_find_devices();</div><div class="line"></div><div class="line">    busses = usb_get_busses();</div><div class="line">    <span class="keyword">for</span> (bus = busses; bus; bus = bus-&gt;next) &#123;</div><div class="line">        <span class="keyword">struct</span> usb_device *dev;</div><div class="line">        <span class="keyword">for</span> (dev = bus-&gt;devices; dev; dev = dev-&gt;next) &#123;</div><div class="line">            <span class="built_in">printf</span>(<span class="string">"idVendor:0x%x\t,ipProduct:0x%x\n"</span>,</div><div class="line">                    dev-&gt;descriptor.idVendor, dev-&gt;descriptor.idProduct);</div><div class="line">            <span class="keyword">if</span> (QQ2440_SECBULK_IDVENDOR == dev-&gt;descriptor.idVendor</div><div class="line">                    &amp;&amp; QQ2440_SECBULK_IDPRODUCT == dev-&gt;descriptor.idProduct) &#123;</div><div class="line">                <span class="built_in">printf</span>(<span class="string">"Target usb device found!\n"</span>);</div><div class="line">                <span class="keyword">struct</span> usb_dev_handle *hdev = usb_open(dev);</div><div class="line">                <span class="keyword">if</span> (!hdev) &#123;</div><div class="line">                    perror(<span class="string">"Cannot open device"</span>);</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    <span class="keyword">if</span> (<span class="number">0</span> != usb_claim_interface(hdev, <span class="number">0</span>)) &#123;</div><div class="line">                        perror(<span class="string">"Cannot claim interface"</span>);</div><div class="line">                        usb_close(hdev);</div><div class="line">                        hdev = <span class="literal">NULL</span>;</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">return</span> hdev;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="built_in">printf</span>(<span class="string">"Target usb device not found!\n"</span>);</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">usage</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"Usage: dnw2 &lt;file&gt;\n\n"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">unsigned</span> <span class="keyword">char</span>* <span class="title">prepare_write_buf</span><span class="params">(<span class="keyword">char</span> *filename, <span class="keyword">unsigned</span> <span class="keyword">int</span> *len)</span> </span>&#123;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> *write_buf = <span class="literal">NULL</span>;</div><div class="line">    <span class="keyword">struct</span> stat fs;</div><div class="line"></div><div class="line">    <span class="keyword">int</span> fd = open(filename, O_RDONLY);</div><div class="line">    <span class="keyword">if</span> (<span class="number">-1</span> == fd) &#123;</div><div class="line">        perror(<span class="string">"Cannot open file"</span>);</div><div class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (<span class="number">-1</span> == fstat(fd, &amp;fs)) &#123;</div><div class="line">        perror(<span class="string">"Cannot get file size"</span>);</div><div class="line">        <span class="keyword">goto</span> error;</div><div class="line">    &#125;</div><div class="line">    write_buf = (<span class="keyword">unsigned</span> <span class="keyword">char</span>*) <span class="built_in">malloc</span>(fs.st_size + <span class="number">10</span>);</div><div class="line">    <span class="keyword">if</span> (<span class="literal">NULL</span> == write_buf) &#123;</div><div class="line">        perror(<span class="string">"malloc failed"</span>);</div><div class="line">        <span class="keyword">goto</span> error;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (fs.st_size != read(fd, write_buf + <span class="number">8</span>, fs.st_size)) &#123;</div><div class="line">        perror(<span class="string">"Reading file failed"</span>);</div><div class="line">        <span class="keyword">goto</span> error;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="built_in">printf</span>(<span class="string">"Filename : %s\n"</span>, filename);</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"Filesize : %d bytes\n"</span>, fs.st_size);</div><div class="line"></div><div class="line">    *((<span class="keyword">u_int32_t</span>*) write_buf) = <span class="number">0x30000000</span>; <span class="comment">//download address</span></div><div class="line">    *((<span class="keyword">u_int32_t</span>*) write_buf + <span class="number">1</span>) = fs.st_size + <span class="number">10</span>; <span class="comment">//download size;</span></div><div class="line"></div><div class="line">    *len = fs.st_size + <span class="number">10</span>;</div><div class="line">    <span class="keyword">return</span> write_buf;</div><div class="line">    error: <span class="keyword">if</span> (fd != <span class="number">-1</span>)</div><div class="line">        close(fd);</div><div class="line">    <span class="keyword">if</span> (<span class="literal">NULL</span> != write_buf)</div><div class="line">        <span class="built_in">free</span>(write_buf);</div><div class="line">    fs.st_size = <span class="number">0</span>;</div><div class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (<span class="number">2</span> != argc) &#123;</div><div class="line">        usage();</div><div class="line">        <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">struct</span> usb_dev_handle *hdev = open_port();</div><div class="line">    <span class="keyword">if</span> (!hdev) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> len = <span class="number">0</span>;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span>* write_buf = prepare_write_buf(argv[<span class="number">1</span>], &amp;len);</div><div class="line">    <span class="keyword">if</span> (<span class="literal">NULL</span> == write_buf)</div><div class="line">        <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line"></div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> remain = len;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> towrite;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"Writing data ...\n"</span>);</div><div class="line">    <span class="keyword">while</span> (remain) &#123;</div><div class="line">        towrite = remain &gt; <span class="number">512</span> ? <span class="number">512</span> : remain;</div><div class="line">        <span class="keyword">if</span> (towrite != usb_bulk_write(hdev, <span class="number">0x03</span>, write_buf + (len - remain),</div><div class="line">                towrite, <span class="number">3000</span>)) &#123;</div><div class="line">            perror(<span class="string">"usb_bulk_write failed"</span>);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line">        remain -= towrite;</div><div class="line">        <span class="built_in">printf</span>(<span class="string">"\r%d%\t %d bytes     "</span>, (len - remain) * <span class="number">100</span> / len, len</div><div class="line">                - remain);</div><div class="line">        fflush(<span class="built_in">stdout</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (<span class="number">0</span> == remain)</div><div class="line">        <span class="built_in">printf</span>(<span class="string">"Done!\n"</span>);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后安装 libusb 库<code>#sudo apt-get install libusb-dev</code></p>
 <p>编译 dnw2.c 文件<code>#gcc dnw2.c -o dnw2 -lusb</code></p>
 <p>把生成的可执行文件 dnw2 移动到 /opt/dnw 里面<code>#sudo mv dnw2 /opt/dnw</code></p>
 <p>以root权限打开<code>#sudo vim /etc/profile</code></p>
@@ -1674,7 +1380,8 @@ int main(int argc, char *argv[]) {
 <p>PC 链接 TQ2440开发板，在终端里面运行 <code>#sudo kermit</code>  ，然后connect连接，打开串口，按相应键进入 USB 传输</p>
 <p>再开一个终端，输入<code>#sudo dnw2 &lt;文件完整路径&gt;</code></p>
 <p>等待下载完毕。</p>
-<p>参考链接：<br><a href="http://tanglz2005.blog.163.com/blog/static/8569819620122213535490/" target="_blank" rel="external">linux环境下安装dnw（for mini2440）</a><br><a href="http://hi.baidu.com/lv0xian/item/dd7e26321316b880c2cf29a5" target="_blank" rel="external">mini2440 在 ubuntu12.04 下 minicom 串口 dnw2 实验成功</a></p>
+<p>参考链接：</p>
+<p><a href="http://tanglz2005.blog.163.com/blog/static/8569819620122213535490/" target="_blank" rel="external">linux环境下安装dnw（for mini2440）</a><br><a href="http://hi.baidu.com/lv0xian/item/dd7e26321316b880c2cf29a5" target="_blank" rel="external">mini2440 在 ubuntu12.04 下 minicom 串口 dnw2 实验成功</a></p>
 ]]></content>
       
         <categories>
@@ -1700,341 +1407,19 @@ int main(int argc, char *argv[]) {
       <title><![CDATA[基于TQ2440上Linux-2.6.32.59的LCD驱动移植]]></title>
       <url>https://corey600.github.io/2012/09/09/lcd-tq2440-linux-2.6.32.59/</url>
       <content type="html"><![CDATA[<h4 id="1-简化LCD时钟计算方法："><a href="#1-简化LCD时钟计算方法：" class="headerlink" title="1.简化LCD时钟计算方法："></a>1.简化LCD时钟计算方法：</h4><p>修改<code>drivers/video/s3c2440fb.c</code>文件365行左右的函数<code>static void s3c2410fb_activate_var(struct fb_info *info)</code>如下：</p>
-<pre><code>static void s3c2410fb_activate_var(struct fb_info *info)
-{
-    struct s3c2410fb_info *fbi = info-&gt;par;
-    void __iomem *regs = fbi-&gt;io;
-    int type = fbi-&gt;regs.lcdcon1 &amp; S3C2410_LCDCON1_TFT;
-    struct fb_var_screeninfo *var = &amp;info-&gt;var;
-
-    //修改以下两行
-    struct s3c2410fb_mach_info *mach_info=fbi-&gt;dev-&gt;platform_data;
-    struct s3c2410fb_display *default_display=mach_info-&gt;displays+mach_info-&gt;default_display;
-
-    int clkdiv;
-
-    clkdiv = DIV_ROUND_UP(s3c2410fb_calc_pixclk(fbi, var-&gt;pixclock), 2);
-
-    dprintk(&quot;%s: var-&gt;xres  = %d\n&quot;, __func__, var-&gt;xres);
-    dprintk(&quot;%s: var-&gt;yres  = %d\n&quot;, __func__, var-&gt;yres);
-    dprintk(&quot;%s: var-&gt;bpp   = %d\n&quot;, __func__, var-&gt;bits_per_pixel);
-
-    if (type == S3C2410_LCDCON1_TFT) {
-        s3c2410fb_calculate_tft_lcd_regs(info, &amp;fbi-&gt;regs);
-        --clkdiv;
-        if (clkdiv &lt; 0)
-            clkdiv = 0;
-    } else {
-        s3c2410fb_calculate_stn_lcd_regs(info, &amp;fbi-&gt;regs);
-        if (clkdiv &lt; 2)
-            clkdiv = 2;
-    }
-
-    //此处修改如下
-    //fbi-&gt;regs.lcdcon1 |=  S3C2410_LCDCON1_CLKVAL(clkdiv);
-    fbi-&gt;regs.lcdcon1 |=  S3C2410_LCDCON1_CLKVAL(default_display-&gt;setclkval);
-
-
-    dprintk(&quot;new register set:\n&quot;);
-    dprintk(&quot;lcdcon[1] = 0x%08lx\n&quot;, fbi-&gt;regs.lcdcon1);
-    dprintk(&quot;lcdcon[2] = 0x%08lx\n&quot;, fbi-&gt;regs.lcdcon2);
-    dprintk(&quot;lcdcon[3] = 0x%08lx\n&quot;, fbi-&gt;regs.lcdcon3);
-    dprintk(&quot;lcdcon[4] = 0x%08lx\n&quot;, fbi-&gt;regs.lcdcon4);
-    dprintk(&quot;lcdcon[5] = 0x%08lx\n&quot;, fbi-&gt;regs.lcdcon5);
-
-    writel(fbi-&gt;regs.lcdcon1 &amp; ~S3C2410_LCDCON1_ENVID,
-    regs + S3C2410_LCDCON1);
-    writel(fbi-&gt;regs.lcdcon2, regs + S3C2410_LCDCON2);
-    writel(fbi-&gt;regs.lcdcon3, regs + S3C2410_LCDCON3);
-    writel(fbi-&gt;regs.lcdcon4, regs + S3C2410_LCDCON4);
-    writel(fbi-&gt;regs.lcdcon5, regs + S3C2410_LCDCON5);
-
-    s3c2410fb_set_lcdaddr(info);
-
-    fbi-&gt;regs.lcdcon1 |= S3C2410_LCDCON1_ENVID,
-    writel(fbi-&gt;regs.lcdcon1, regs + S3C2410_LCDCON1);
-}
-</code></pre><a id="more"></a>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">static void s3c2410fb_activate_var(struct fb_info *info)</div><div class="line">&#123;</div><div class="line">  <span class="function"><span class="title">struct</span> s3c2410fb_info *fbi = info-&gt;</span>par;</div><div class="line">  <span class="function"><span class="title">void</span> __iomem *regs = fbi-&gt;</span>io;</div><div class="line">  <span class="function"><span class="title">int</span> type = fbi-&gt;</span>regs.lcdcon1 &amp; S3C2410_LCDCON1_TFT;</div><div class="line">  <span class="function"><span class="title">struct</span> fb_var_screeninfo *var = &amp;info-&gt;</span>var;</div><div class="line"></div><div class="line">  <span class="comment">//修改以下两行</span></div><div class="line">  <span class="function"><span class="title">struct</span> s3c2410fb_mach_info *mach_info=fbi-&gt;</span><span class="function"><span class="title">dev</span>-&gt;</span>platform_data;</div><div class="line">  <span class="function"><span class="title">struct</span> s3c2410fb_display *default_display=mach_info-&gt;</span><span class="function"><span class="title">displays</span>+mach_info-&gt;</span>default_display;</div><div class="line"></div><div class="line">  int clkdiv;</div><div class="line"></div><div class="line">  <span class="function"><span class="title">clkdiv</span> = DIV_ROUND_UP(s3c2410fb_calc_pixclk(fbi, var-&gt;</span>pixclock), <span class="number">2</span>);</div><div class="line"></div><div class="line">  <span class="function"><span class="title">dprintk</span>("%s: var-&gt;</span><span class="function"><span class="title">xres</span>  = %d\n", __func__, var-&gt;</span>xres);</div><div class="line">  <span class="function"><span class="title">dprintk</span>("%s: var-&gt;</span><span class="function"><span class="title">yres</span>  = %d\n", __func__, var-&gt;</span>yres);</div><div class="line">  <span class="function"><span class="title">dprintk</span>("%s: var-&gt;</span><span class="function"><span class="title">bpp</span>   = %d\n", __func__, var-&gt;</span>bits_per_pixel);</div><div class="line"></div><div class="line">  <span class="keyword">if</span> (type == S3C2410_LCDCON1_TFT) &#123;</div><div class="line">    <span class="function"><span class="title">s3c2410fb_calculate_tft_lcd_regs</span>(info, &amp;fbi-&gt;</span>regs);</div><div class="line">    --clkdiv;</div><div class="line">    <span class="keyword">if</span> (clkdiv &lt; <span class="number">0</span>)</div><div class="line">      clkdiv = <span class="number">0</span>;</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="function"><span class="title">s3c2410fb_calculate_stn_lcd_regs</span>(info, &amp;fbi-&gt;</span>regs);</div><div class="line">    <span class="keyword">if</span> (clkdiv &lt; <span class="number">2</span>)</div><div class="line">      clkdiv = <span class="number">2</span>;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">//此处修改如下</span></div><div class="line">  <span class="comment">//fbi-&gt;regs.lcdcon1 |=  S3C2410_LCDCON1_CLKVAL(clkdiv);</span></div><div class="line">  <span class="function"><span class="title">fbi</span>-&gt;</span><span class="function"><span class="title">regs</span>.lcdcon1 |=  S3C2410_LCDCON1_CLKVAL(default_display-&gt;</span>setclkval);</div><div class="line"></div><div class="line"></div><div class="line">  dprintk(<span class="string">"new register set:\n"</span>);</div><div class="line">  <span class="function"><span class="title">dprintk</span>("lcdcon[1] = 0x%08lx\n", fbi-&gt;</span>regs.lcdcon1);</div><div class="line">  <span class="function"><span class="title">dprintk</span>("lcdcon[2] = 0x%08lx\n", fbi-&gt;</span>regs.lcdcon2);</div><div class="line">  <span class="function"><span class="title">dprintk</span>("lcdcon[3] = 0x%08lx\n", fbi-&gt;</span>regs.lcdcon3);</div><div class="line">  <span class="function"><span class="title">dprintk</span>("lcdcon[4] = 0x%08lx\n", fbi-&gt;</span>regs.lcdcon4);</div><div class="line">  <span class="function"><span class="title">dprintk</span>("lcdcon[5] = 0x%08lx\n", fbi-&gt;</span>regs.lcdcon5);</div><div class="line"></div><div class="line">  <span class="function"><span class="title">writel</span>(fbi-&gt;</span>regs.lcdcon1 &amp; ~S3C2410_LCDCON1_ENVID,</div><div class="line">  regs + S3C2410_LCDCON1);</div><div class="line">  <span class="function"><span class="title">writel</span>(fbi-&gt;</span>regs.lcdcon2, regs + S3C2410_LCDCON2);</div><div class="line">  <span class="function"><span class="title">writel</span>(fbi-&gt;</span>regs.lcdcon3, regs + S3C2410_LCDCON3);</div><div class="line">  <span class="function"><span class="title">writel</span>(fbi-&gt;</span>regs.lcdcon4, regs + S3C2410_LCDCON4);</div><div class="line">  <span class="function"><span class="title">writel</span>(fbi-&gt;</span>regs.lcdcon5, regs + S3C2410_LCDCON5);</div><div class="line"></div><div class="line">  s3c2410fb_set_lcdaddr(info);</div><div class="line"></div><div class="line">  <span class="function"><span class="title">fbi</span>-&gt;</span>regs.lcdcon1 |= S3C2410_LCDCON1_ENVID,</div><div class="line">  <span class="function"><span class="title">writel</span>(fbi-&gt;</span>regs.lcdcon1, regs + S3C2410_LCDCON1);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<a id="more"></a>
 <p>修改<code>arch/arm/mach-s3c2410/include/mach/fb.h</code>文件的40行左右的结构体<code>s3c2410fb_display</code>如下：</p>
-<pre><code>struct s3c2410fb_display {
-    unsigned type;
-
-    unsigned short width;
-    unsigned short height;
-
-    unsigned short xres;
-    unsigned short yres;
-    unsigned short bpp;
-
-    unsigned pixclock;
-
-    //修改下面一行
-    unsigned setclkval;
-
-    unsigned short left_margin;  
-    unsigned short right_margin;
-    unsigned short hsync_len;    
-    unsigned short upper_margin;
-    unsigned short lower_margin;
-    unsigned short vsync_len;
-
-    unsigned long lcdcon5;
-};
-</code></pre><h4 id="2-添加多种LCD支持："><a href="#2-添加多种LCD支持：" class="headerlink" title="2.添加多种LCD支持："></a>2.添加多种LCD支持：</h4><p>修改<code>arch/arm/mach-s3c2440/mach-smdk2440.c</code>文件107行左右的结构体<code>s3c2410fb_display smdk2440_lcd_cfg __initdata</code>如下：</p>
-<pre><code>static struct s3c2410fb_display smdk2440_lcd_cfg __initdata = {
-
-    .lcdcon5 = S3C2410_LCDCON5_FRM565 |
-     S3C2410_LCDCON5_INVVLINE |
-     S3C2410_LCDCON5_INVVFRAME |
-     S3C2410_LCDCON5_PWREN |
-     S3C2410_LCDCON5_HWSWP,
-
-    .type = S3C2410_LCDCON1_TFT,
-
-    //修改以下
-    #if defined(CONFIG_FB_S3C24X0_T240320)
-    .width = 240,
-    .height = 320,
-
-    .pixclock = 100000,
-    .setclkval = 0x4,
-    .xres = 240,
-    .yres = 320,
-    .bpp = 16,
-    .left_margin = 3,
-    .right_margin = 6,
-    .hsync_len = 1,
-    .upper_margin = 2,
-    .lower_margin = 1,
-    .vsync_len = 1,
-
-    #elif defined(CONFIG_FB_S3C24X0_S320240)
-    .width = 320,
-    .height = 240,
-
-    .pixclock = 80000,
-    .setclkval = 0x3,
-    .xres = 320,
-    .yres = 240,
-    .bpp = 16,
-    .left_margin = 15,
-    .right_margin = 5,
-    .hsync_len = 8,
-    .upper_margin = 5,
-    .lower_margin = 3,
-    .vsync_len = 15,
-
-    #elif defined(CONFIG_FB_S3C24X0_W320240)
-    .width = 320,
-    .height = 240,
-
-    .pixclock = 80000,
-    .setclkval = 0x3,
-    .xres = 320,
-    .yres = 240,
-    .bpp = 16,
-    .left_margin = 28,
-    .right_margin = 24,
-    .hsync_len = 42,
-    .upper_margin = 6,
-    .lower_margin = 2,
-    .vsync_len = 12,
-
-    #elif defined(CONFIG_FB_S3C24X0_LCD480272)
-    .width = 480,
-    .height = 272,
-
-    .pixclock = 40000,
-    .setclkval = 0x4,
-    .xres = 480,
-    .yres = 272,
-    .bpp = 16,
-    .left_margin = 19,
-    .right_margin = 10,
-    .hsync_len = 30,
-    .upper_margin = 4,
-    .lower_margin = 2,
-    .vsync_len = 8,
-
-    #elif defined(CONFIG_FB_S3C24X0_TFT640480)
-    .width = 640,
-    .height = 480,
-
-    .pixclock = 40000,
-    .setclkval = 0x1,
-    .xres = 640,
-    .yres = 480,
-    .bpp = 16,
-    .left_margin = 40,
-    .right_margin = 67,
-    .hsync_len = 31,
-    .upper_margin = 5,
-    .lower_margin = 25,
-    .vsync_len = 1,
-
-    #elif defined(CONFIG_FB_S3C24X0_TFT800480)
-    .width = 800,
-    .height = 480,
-
-    .pixclock = 40000,
-    .setclkval = 0x1,
-    .xres = 800,
-    .yres = 480,
-    .bpp = 16,
-    .left_margin = 15,
-    .right_margin = 47,
-    .hsync_len = 95,
-    .upper_margin = 9,
-    .lower_margin = 5,
-    .vsync_len = 1,
-
-    #elif defined(CONFIG_FB_S3C24X0_TFT800600)
-    .width = 800,
-    .height = 600,
-
-    .pixclock = 40000,
-    .setclkval = 0x1,
-    .xres = 800,
-    .yres = 600,
-    .bpp = 16,
-    .left_margin = 15,
-    .right_margin = 47,
-    .hsync_len = 95,
-    .upper_margin = 9,
-    .lower_margin = 5,
-    .vsync_len = 1,
-
-    #endif
-};
-</code></pre><p>修改同一文件235行左右的结构体<code>s3c2410fb_mach_info smdk2440_fb_info __initdata</code>如下：</p>
-<pre><code>static struct s3c2410fb_mach_info smdk2440_fb_info __initdata = {
-    .displays = &amp;smdk2440_lcd_cfg,
-    .num_displays = 1,
-    .default_display = 0,
-
-    #if 0
-    .gpccon = 0xaa940659,
-    .gpccon_mask = 0xffffffff,
-    .gpcup = 0x0000ffff,
-    .gpcup_mask = 0xffffffff,
-    .gpdcon = 0xaa84aaa0,
-    .gpdcon_mask = 0xffffffff,
-    .gpdup = 0x0000faff,
-    .gpdup_mask = 0xffffffff,
-    #endif
-
-    //注释掉下面一行
-    // .lpcsel = ((0xCE6) &amp; ~7) | 1&lt;&lt;4,
-};
-</code></pre><p>修改<code>drivers/video/Kconfig</code>文件1907到1986行左右如下：</p>
-<pre><code># 修改下面两行
-config FB_S3C24X0
-tristate &quot;S3C24X0 LCD framebuffer support&quot;
-
-depends on FB &amp;&amp; ARCH_S3C2410
-select FB_CFB_FILLRECT
-select FB_CFB_COPYAREA
-select FB_CFB_IMAGEBLIT
----help---
- Frame buffer driver for the built-in LCD controller in the Samsung
- S3C2410 processor.
-
- This driver is also available as a module ( = code which can be
- inserted and removed from the running kernel whenever you want). The
- module will be called s3c2410fb. If you want to compile it as a module,
- say M here and read &lt;file:Documentation/kbuild/modules.txt&gt;.
-
- If unsure, say N.
-
-# 修改以下
-choice
-prompt &quot;LCD select&quot;
-depends on FB_S3C24X0
-help
-  S3C24x0 LCD size select
-
-config FB_S3C24X0_S320240
-boolean &quot;3.5 inch 320x240 Samsung LCD&quot;
-depends on FB_S3C24X0
-help
-  3.5 inch 320x240 Samsung LCD
-
-config FB_S3C24X0_W320240
-boolean &quot;3.5 inch 320x240 WanXin or QiMei LCD&quot;
-depends on FB_S3C24X0
-help
-  3.5 inch 320x240 WanXin or QiMei LCD
-
-config FB_S3C24X0_T240320
-boolean &quot;3.5 inch 240X320 Toshiba LCD&quot;
-depends on FB_S3C24X0
-help
-  3.5 inch 240x320 Toshiba LCD
-
-config FB_S3C24X0_TFT480272
-boolean &quot;4.3 inch 480X272 TFT LCD&quot;
-depends on FB_S3C24X0
-help
-  4.3 inch 480X272 TFT LCD
-
-config FB_S3C24X0_TFT640480
-boolean &quot;VGA 640x480&quot;
-depends on FB_S3C24X0
-help
-  VGA 640x480
-
-config FB_S3C24X0_TFT800480
-boolean &quot;7 inch 800x480 LCD&quot;
-depends on FB_S3C24X0
-help
-  7 inch 800x480 LCD
-
-config FB_S3C24X0_TFT800600
-boolean &quot;10.4 inch 800x600 TFT LCD&quot;
-depends on FB_S3C24X0
-help
-  10.4 inch 800x480 TFT LCD
-
-config FB_S3C24X0_TFT1024768
-boolean &quot;VGA 1024x768&quot;
-depends on FB_S3C24X0
-help
-  VGA 1024x768 TFT LCD
-
-endchoice
-# 修改以上
-
-config FB_S3C2410_DEBUG
-bool &quot;S3C2410 lcd debug messages&quot;
-
-# 修改下面一行
-depends on FB_S3C24X0
-
-help
- Turn on debugging messages. Note that you can set/unset at run time
- through sysfs
-}
-</code></pre><p>修改<code>drivers/video/Makefile</code>文件116行左右如下：</p>
-<pre><code>obj-$(CONFIG_FB_MAXINE)  += maxinefb.o
-obj-$(CONFIG_FB_METRONOME)        += metronomefb.o
-obj-$(CONFIG_FB_BROADSHEET)       += broadsheetfb.o
-obj-$(CONFIG_FB_S1D13XXX)  += s1d13xxxfb.o
-obj-$(CONFIG_FB_SH7760)  += sh7760fb.o
-obj-$(CONFIG_FB_IMX)              += imxfb.o
-obj-$(CONFIG_FB_S3C)  += s3c-fb.o
-
-# 修改下面一行
-obj-$(CONFIG_FB_S3C24X0)  += s3c2410fb.o
-
-obj-$(CONFIG_FB_FSL_DIU)  += fsl-diu-fb.o
-obj-$(CONFIG_FB_COBALT)           += cobalt_lcdfb.o
-obj-$(CONFIG_FB_PNX4008_DUM)  += pnx4008/
-obj-$(CONFIG_FB_PNX4008_DUM_RGB)  += pnx4008/
-obj-$(CONFIG_FB_IBM_GXT4500)  += gxt4500.o
-obj-$(CONFIG_FB_PS3)  += ps3fb.o
-obj-$(CONFIG_FB_SM501)            += sm501fb.o
-obj-$(CONFIG_FB_XILINX)           += xilinxfb.o
-</code></pre>]]></content>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> s3c2410fb_display &#123;</div><div class="line">  <span class="keyword">unsigned</span> type;</div><div class="line"></div><div class="line">  <span class="keyword">unsigned</span> <span class="keyword">short</span> <span class="built_in">width</span>;</div><div class="line">  <span class="keyword">unsigned</span> <span class="keyword">short</span> <span class="built_in">height</span>;</div><div class="line"></div><div class="line">  <span class="keyword">unsigned</span> <span class="keyword">short</span> xres;</div><div class="line">  <span class="keyword">unsigned</span> <span class="keyword">short</span> yres;</div><div class="line">  <span class="keyword">unsigned</span> <span class="keyword">short</span> bpp;</div><div class="line"></div><div class="line">  <span class="keyword">unsigned</span> pixclock;</div><div class="line"></div><div class="line">  <span class="comment">//修改下面一行</span></div><div class="line">  <span class="keyword">unsigned</span> setclkval;</div><div class="line"></div><div class="line">  <span class="keyword">unsigned</span> <span class="keyword">short</span> left_margin;</div><div class="line">  <span class="keyword">unsigned</span> <span class="keyword">short</span> right_margin;</div><div class="line">  <span class="keyword">unsigned</span> <span class="keyword">short</span> hsync_len;</div><div class="line">  <span class="keyword">unsigned</span> <span class="keyword">short</span> upper_margin;</div><div class="line">  <span class="keyword">unsigned</span> <span class="keyword">short</span> lower_margin;</div><div class="line">  <span class="keyword">unsigned</span> <span class="keyword">short</span> vsync_len;</div><div class="line"></div><div class="line">  <span class="keyword">unsigned</span> <span class="keyword">long</span> lcdcon5;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h4 id="2-添加多种LCD支持："><a href="#2-添加多种LCD支持：" class="headerlink" title="2.添加多种LCD支持："></a>2.添加多种LCD支持：</h4><p>修改<code>arch/arm/mach-s3c2440/mach-smdk2440.c</code>文件107行左右的结构体<code>s3c2410fb_display smdk2440_lcd_cfg __initdata</code>如下：</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div></pre></td><td class="code"><pre><div class="line">static struct s3c2410fb_display smdk2440_lcd_cfg <span class="attr">__initdata</span> = &#123;</div><div class="line"></div><div class="line">  .<span class="attr">lcdcon5</span> = S3C2410_LCDCON5_FRM565 |</div><div class="line">   S3C2410_LCDCON5_INVVLINE |</div><div class="line">   S3C2410_LCDCON5_INVVFRAME |</div><div class="line">   S3C2410_LCDCON5_PWREN |</div><div class="line">   S3C2410_LCDCON5_HWSWP,</div><div class="line"></div><div class="line">  .<span class="attr">type</span> = S3C2410_LCDCON1_TFT,</div><div class="line"></div><div class="line">  //修改以下</div><div class="line">  <span class="comment">#if defined(CONFIG_FB_S3C24X0_T240320)</span></div><div class="line">  .<span class="attr">width</span> = <span class="number">240</span>,</div><div class="line">  .<span class="attr">height</span> = <span class="number">320</span>,</div><div class="line"></div><div class="line">  .<span class="attr">pixclock</span> = <span class="number">100000</span>,</div><div class="line">  .<span class="attr">setclkval</span> = <span class="number">0</span>x4,</div><div class="line">  .<span class="attr">xres</span> = <span class="number">240</span>,</div><div class="line">  .<span class="attr">yres</span> = <span class="number">320</span>,</div><div class="line">  .<span class="attr">bpp</span> = <span class="number">16</span>,</div><div class="line">  .<span class="attr">left_margin</span> = <span class="number">3</span>,</div><div class="line">  .<span class="attr">right_margin</span> = <span class="number">6</span>,</div><div class="line">  .<span class="attr">hsync_len</span> = <span class="number">1</span>,</div><div class="line">  .<span class="attr">upper_margin</span> = <span class="number">2</span>,</div><div class="line">  .<span class="attr">lower_margin</span> = <span class="number">1</span>,</div><div class="line">  .<span class="attr">vsync_len</span> = <span class="number">1</span>,</div><div class="line"></div><div class="line">  <span class="comment">#elif defined(CONFIG_FB_S3C24X0_S320240)</span></div><div class="line">  .<span class="attr">width</span> = <span class="number">320</span>,</div><div class="line">  .<span class="attr">height</span> = <span class="number">240</span>,</div><div class="line"></div><div class="line">  .<span class="attr">pixclock</span> = <span class="number">80000</span>,</div><div class="line">  .<span class="attr">setclkval</span> = <span class="number">0</span>x3,</div><div class="line">  .<span class="attr">xres</span> = <span class="number">320</span>,</div><div class="line">  .<span class="attr">yres</span> = <span class="number">240</span>,</div><div class="line">  .<span class="attr">bpp</span> = <span class="number">16</span>,</div><div class="line">  .<span class="attr">left_margin</span> = <span class="number">15</span>,</div><div class="line">  .<span class="attr">right_margin</span> = <span class="number">5</span>,</div><div class="line">  .<span class="attr">hsync_len</span> = <span class="number">8</span>,</div><div class="line">  .<span class="attr">upper_margin</span> = <span class="number">5</span>,</div><div class="line">  .<span class="attr">lower_margin</span> = <span class="number">3</span>,</div><div class="line">  .<span class="attr">vsync_len</span> = <span class="number">15</span>,</div><div class="line"></div><div class="line">  <span class="comment">#elif defined(CONFIG_FB_S3C24X0_W320240)</span></div><div class="line">  .<span class="attr">width</span> = <span class="number">320</span>,</div><div class="line">  .<span class="attr">height</span> = <span class="number">240</span>,</div><div class="line"></div><div class="line">  .<span class="attr">pixclock</span> = <span class="number">80000</span>,</div><div class="line">  .<span class="attr">setclkval</span> = <span class="number">0</span>x3,</div><div class="line">  .<span class="attr">xres</span> = <span class="number">320</span>,</div><div class="line">  .<span class="attr">yres</span> = <span class="number">240</span>,</div><div class="line">  .<span class="attr">bpp</span> = <span class="number">16</span>,</div><div class="line">  .<span class="attr">left_margin</span> = <span class="number">28</span>,</div><div class="line">  .<span class="attr">right_margin</span> = <span class="number">24</span>,</div><div class="line">  .<span class="attr">hsync_len</span> = <span class="number">42</span>,</div><div class="line">  .<span class="attr">upper_margin</span> = <span class="number">6</span>,</div><div class="line">  .<span class="attr">lower_margin</span> = <span class="number">2</span>,</div><div class="line">  .<span class="attr">vsync_len</span> = <span class="number">12</span>,</div><div class="line"></div><div class="line">  <span class="comment">#elif defined(CONFIG_FB_S3C24X0_LCD480272)</span></div><div class="line">  .<span class="attr">width</span> = <span class="number">480</span>,</div><div class="line">  .<span class="attr">height</span> = <span class="number">272</span>,</div><div class="line"></div><div class="line">  .<span class="attr">pixclock</span> = <span class="number">40000</span>,</div><div class="line">  .<span class="attr">setclkval</span> = <span class="number">0</span>x4,</div><div class="line">  .<span class="attr">xres</span> = <span class="number">480</span>,</div><div class="line">  .<span class="attr">yres</span> = <span class="number">272</span>,</div><div class="line">  .<span class="attr">bpp</span> = <span class="number">16</span>,</div><div class="line">  .<span class="attr">left_margin</span> = <span class="number">19</span>,</div><div class="line">  .<span class="attr">right_margin</span> = <span class="number">10</span>,</div><div class="line">  .<span class="attr">hsync_len</span> = <span class="number">30</span>,</div><div class="line">  .<span class="attr">upper_margin</span> = <span class="number">4</span>,</div><div class="line">  .<span class="attr">lower_margin</span> = <span class="number">2</span>,</div><div class="line">  .<span class="attr">vsync_len</span> = <span class="number">8</span>,</div><div class="line"></div><div class="line">  <span class="comment">#elif defined(CONFIG_FB_S3C24X0_TFT640480)</span></div><div class="line">  .<span class="attr">width</span> = <span class="number">640</span>,</div><div class="line">  .<span class="attr">height</span> = <span class="number">480</span>,</div><div class="line"></div><div class="line">  .<span class="attr">pixclock</span> = <span class="number">40000</span>,</div><div class="line">  .<span class="attr">setclkval</span> = <span class="number">0</span>x1,</div><div class="line">  .<span class="attr">xres</span> = <span class="number">640</span>,</div><div class="line">  .<span class="attr">yres</span> = <span class="number">480</span>,</div><div class="line">  .<span class="attr">bpp</span> = <span class="number">16</span>,</div><div class="line">  .<span class="attr">left_margin</span> = <span class="number">40</span>,</div><div class="line">  .<span class="attr">right_margin</span> = <span class="number">67</span>,</div><div class="line">  .<span class="attr">hsync_len</span> = <span class="number">31</span>,</div><div class="line">  .<span class="attr">upper_margin</span> = <span class="number">5</span>,</div><div class="line">  .<span class="attr">lower_margin</span> = <span class="number">25</span>,</div><div class="line">  .<span class="attr">vsync_len</span> = <span class="number">1</span>,</div><div class="line"></div><div class="line">  <span class="comment">#elif defined(CONFIG_FB_S3C24X0_TFT800480)</span></div><div class="line">  .<span class="attr">width</span> = <span class="number">800</span>,</div><div class="line">  .<span class="attr">height</span> = <span class="number">480</span>,</div><div class="line"></div><div class="line">  .<span class="attr">pixclock</span> = <span class="number">40000</span>,</div><div class="line">  .<span class="attr">setclkval</span> = <span class="number">0</span>x1,</div><div class="line">  .<span class="attr">xres</span> = <span class="number">800</span>,</div><div class="line">  .<span class="attr">yres</span> = <span class="number">480</span>,</div><div class="line">  .<span class="attr">bpp</span> = <span class="number">16</span>,</div><div class="line">  .<span class="attr">left_margin</span> = <span class="number">15</span>,</div><div class="line">  .<span class="attr">right_margin</span> = <span class="number">47</span>,</div><div class="line">  .<span class="attr">hsync_len</span> = <span class="number">95</span>,</div><div class="line">  .<span class="attr">upper_margin</span> = <span class="number">9</span>,</div><div class="line">  .<span class="attr">lower_margin</span> = <span class="number">5</span>,</div><div class="line">  .<span class="attr">vsync_len</span> = <span class="number">1</span>,</div><div class="line"></div><div class="line">  <span class="comment">#elif defined(CONFIG_FB_S3C24X0_TFT800600)</span></div><div class="line">  .<span class="attr">width</span> = <span class="number">800</span>,</div><div class="line">  .<span class="attr">height</span> = <span class="number">600</span>,</div><div class="line"></div><div class="line">  .<span class="attr">pixclock</span> = <span class="number">40000</span>,</div><div class="line">  .<span class="attr">setclkval</span> = <span class="number">0</span>x1,</div><div class="line">  .<span class="attr">xres</span> = <span class="number">800</span>,</div><div class="line">  .<span class="attr">yres</span> = <span class="number">600</span>,</div><div class="line">  .<span class="attr">bpp</span> = <span class="number">16</span>,</div><div class="line">  .<span class="attr">left_margin</span> = <span class="number">15</span>,</div><div class="line">  .<span class="attr">right_margin</span> = <span class="number">47</span>,</div><div class="line">  .<span class="attr">hsync_len</span> = <span class="number">95</span>,</div><div class="line">  .<span class="attr">upper_margin</span> = <span class="number">9</span>,</div><div class="line">  .<span class="attr">lower_margin</span> = <span class="number">5</span>,</div><div class="line">  .<span class="attr">vsync_len</span> = <span class="number">1</span>,</div><div class="line"></div><div class="line">  <span class="comment">#endif</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<p>修改同一文件235行左右的结构体<code>s3c2410fb_mach_info smdk2440_fb_info __initdata</code>如下：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">static struct s3c2410fb_mach_info smdk2440_fb_info __initdata = &#123;</div><div class="line"><span class="meta">  .displays</span> = &amp;smdk2440_lcd_cfg,</div><div class="line"><span class="meta">  .num_displays</span> = <span class="number">1</span>,</div><div class="line"><span class="meta">  .default_display</span> = <span class="number">0</span>,</div><div class="line"></div><div class="line">  #if <span class="number">0</span></div><div class="line"><span class="meta">  .gpccon</span> = <span class="number">0xaa940659</span>,</div><div class="line"><span class="meta">  .gpccon_mask</span> = <span class="number">0xffffffff</span>,</div><div class="line"><span class="meta">  .gpcup</span> = <span class="number">0x0000ffff</span>,</div><div class="line"><span class="meta">  .gpcup_mask</span> = <span class="number">0xffffffff</span>,</div><div class="line"><span class="meta">  .gpdcon</span> = <span class="number">0xaa84aaa0</span>,</div><div class="line"><span class="meta">  .gpdcon_mask</span> = <span class="number">0xffffffff</span>,</div><div class="line"><span class="meta">  .gpdup</span> = <span class="number">0x0000faff</span>,</div><div class="line"><span class="meta">  .gpdup_mask</span> = <span class="number">0xffffffff</span>,</div><div class="line">  #endif</div><div class="line"></div><div class="line">  //注释掉下面一行</div><div class="line">  // .lpcsel = ((<span class="number">0xCE6</span>) &amp; ~<span class="number">7</span>) | <span class="number">1</span>&lt;&lt;<span class="number">4</span>,</div><div class="line">&#125;<span class="comment">;</span></div></pre></td></tr></table></figure>
+<p>修改<code>drivers/video/Kconfig</code>文件1907到1986行左右如下：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 修改下面两行</span></div><div class="line">config FB_S3C24X0</div><div class="line">tristate <span class="string">"S3C24X0 LCD framebuffer support"</span></div><div class="line"></div><div class="line">depends <span class="keyword">on</span> FB &amp;&amp; ARCH_S3C2410</div><div class="line">select FB_CFB_FILLRECT</div><div class="line">select FB_CFB_COPYAREA</div><div class="line">select FB_CFB_IMAGEBLIT</div><div class="line"><span class="comment">---help---</span></div><div class="line"> Frame buffer driver <span class="keyword">for</span> <span class="keyword">the</span> built-<span class="keyword">in</span> LCD controller <span class="keyword">in</span> <span class="keyword">the</span> Samsung</div><div class="line"> S3C2410 processor.</div><div class="line"></div><div class="line"> This driver <span class="keyword">is</span> also available <span class="keyword">as</span> a module ( = code which can be</div><div class="line"> inserted <span class="keyword">and</span> removed <span class="keyword">from</span> <span class="keyword">the</span> <span class="built_in">running</span> kernel whenever you want). The</div><div class="line"> module will be called s3c2410fb. If you want <span class="keyword">to</span> compile <span class="keyword">it</span> <span class="keyword">as</span> a module,</div><div class="line"> <span class="built_in">say</span> M here <span class="keyword">and</span> <span class="built_in">read</span> &lt;<span class="built_in">file</span>:Documentation/kbuild/modules.txt&gt;.</div><div class="line"></div><div class="line"> If unsure, <span class="built_in">say</span> N.</div><div class="line"></div><div class="line"><span class="comment"># 修改以下</span></div><div class="line">choice</div><div class="line">prompt <span class="string">"LCD select"</span></div><div class="line">depends <span class="keyword">on</span> FB_S3C24X0</div><div class="line">help</div><div class="line">  S3C24x0 LCD size select</div><div class="line"></div><div class="line">config FB_S3C24X0_S320240</div><div class="line"><span class="built_in">boolean</span> <span class="string">"3.5 inch 320x240 Samsung LCD"</span></div><div class="line">depends <span class="keyword">on</span> FB_S3C24X0</div><div class="line">help</div><div class="line">  <span class="number">3.5</span> inch <span class="number">320</span>x240 Samsung LCD</div><div class="line"></div><div class="line">config FB_S3C24X0_W320240</div><div class="line"><span class="built_in">boolean</span> <span class="string">"3.5 inch 320x240 WanXin or QiMei LCD"</span></div><div class="line">depends <span class="keyword">on</span> FB_S3C24X0</div><div class="line">help</div><div class="line">  <span class="number">3.5</span> inch <span class="number">320</span>x240 WanXin <span class="keyword">or</span> QiMei LCD</div><div class="line"></div><div class="line">config FB_S3C24X0_T240320</div><div class="line"><span class="built_in">boolean</span> <span class="string">"3.5 inch 240X320 Toshiba LCD"</span></div><div class="line">depends <span class="keyword">on</span> FB_S3C24X0</div><div class="line">help</div><div class="line">  <span class="number">3.5</span> inch <span class="number">240</span>x320 Toshiba LCD</div><div class="line"></div><div class="line">config FB_S3C24X0_TFT480272</div><div class="line"><span class="built_in">boolean</span> <span class="string">"4.3 inch 480X272 TFT LCD"</span></div><div class="line">depends <span class="keyword">on</span> FB_S3C24X0</div><div class="line">help</div><div class="line">  <span class="number">4.3</span> inch <span class="number">480</span>X272 TFT LCD</div><div class="line"></div><div class="line">config FB_S3C24X0_TFT640480</div><div class="line"><span class="built_in">boolean</span> <span class="string">"VGA 640x480"</span></div><div class="line">depends <span class="keyword">on</span> FB_S3C24X0</div><div class="line">help</div><div class="line">  VGA <span class="number">640</span>x480</div><div class="line"></div><div class="line">config FB_S3C24X0_TFT800480</div><div class="line"><span class="built_in">boolean</span> <span class="string">"7 inch 800x480 LCD"</span></div><div class="line">depends <span class="keyword">on</span> FB_S3C24X0</div><div class="line">help</div><div class="line">  <span class="number">7</span> inch <span class="number">800</span>x480 LCD</div><div class="line"></div><div class="line">config FB_S3C24X0_TFT800600</div><div class="line"><span class="built_in">boolean</span> <span class="string">"10.4 inch 800x600 TFT LCD"</span></div><div class="line">depends <span class="keyword">on</span> FB_S3C24X0</div><div class="line">help</div><div class="line">  <span class="number">10.4</span> inch <span class="number">800</span>x480 TFT LCD</div><div class="line"></div><div class="line">config FB_S3C24X0_TFT1024768</div><div class="line"><span class="built_in">boolean</span> <span class="string">"VGA 1024x768"</span></div><div class="line">depends <span class="keyword">on</span> FB_S3C24X0</div><div class="line">help</div><div class="line">  VGA <span class="number">1024</span>x768 TFT LCD</div><div class="line"></div><div class="line">endchoice</div><div class="line"><span class="comment"># 修改以上</span></div><div class="line"></div><div class="line">config FB_S3C2410_DEBUG</div><div class="line">bool <span class="string">"S3C2410 lcd debug messages"</span></div><div class="line"></div><div class="line"><span class="comment"># 修改下面一行</span></div><div class="line">depends <span class="keyword">on</span> FB_S3C24X0</div><div class="line"></div><div class="line">help</div><div class="line"> Turn <span class="keyword">on</span> debugging messages. Note <span class="keyword">that</span> you can <span class="keyword">set</span>/unset <span class="keyword">at</span> <span class="built_in">run</span> <span class="built_in">time</span></div><div class="line"> <span class="keyword">through</span> sysfs</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>修改<code>drivers/video/Makefile</code>文件116行左右如下：</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">obj-<span class="variable">$(</span>CONFIG_FB_MAXINE)  += maxinefb.o</div><div class="line">obj-<span class="variable">$(</span>CONFIG_FB_METRONOME)        += metronomefb.o</div><div class="line">obj-<span class="variable">$(</span>CONFIG_FB_BROADSHEET)       += broadsheetfb.o</div><div class="line">obj-<span class="variable">$(</span>CONFIG_FB_S1D13XXX)  += s1d13xxxfb.o</div><div class="line">obj-<span class="variable">$(</span>CONFIG_FB_SH776<span class="number">0</span>)  += sh7760fb.o</div><div class="line">obj-<span class="variable">$(</span>CONFIG_FB_IMX)              += imxfb.o</div><div class="line">obj-<span class="variable">$(</span>CONFIG_FB_S3C)  += s3c-fb.o</div><div class="line"></div><div class="line"><span class="comment"># 修改下面一行</span></div><div class="line">obj-<span class="variable">$(</span>CONFIG_FB_S3C24X<span class="number">0</span>)  += s3c2410fb.o</div><div class="line"></div><div class="line">obj-<span class="variable">$(</span>CONFIG_FB_FSL_DIU)  += fsl-diu-fb.o</div><div class="line">obj-<span class="variable">$(</span>CONFIG_FB_COBALT)           += cobalt_lcdfb.o</div><div class="line">obj-<span class="variable">$(</span>CONFIG_FB_PNX4008_DUM)  += pnx4008/</div><div class="line">obj-<span class="variable">$(</span>CONFIG_FB_PNX4008_DUM_RGB)  += pnx4008/</div><div class="line">obj-<span class="variable">$(</span>CONFIG_FB_IBM_GXT450<span class="number">0</span>)  += gxt450<span class="number">0</span>.o</div><div class="line">obj-<span class="variable">$(</span>CONFIG_FB_PS3)  += ps3fb.o</div><div class="line">obj-<span class="variable">$(</span>CONFIG_FB_SM501)            += sm501fb.o</div><div class="line">obj-<span class="variable">$(</span>CONFIG_FB_XILINX)           += xilinxfb.o</div></pre></td></tr></table></figure>
+]]></content>
       
         <categories>
             
@@ -2059,38 +1444,17 @@ obj-$(CONFIG_FB_XILINX)           += xilinxfb.o
       <title><![CDATA[完善TQ2440上Linux-2.6.32.59的串口驱动]]></title>
       <url>https://corey600.github.io/2012/09/06/the-serial-port-driver-tq2440-linux-2.6.32.59/</url>
       <content type="html"><![CDATA[<p>修改内核源码<code>arch/arm/mach-s3c2440/mach-smdk2440.c</code>文件的100行，将其改为：</p>
-<pre><code>.ulcon =0x03,
-</code></pre><p>修改<code>drivers/serial/samsung.c</code>文件的53行添加如下内容：</p>
-<pre><code>#include &lt;mach/regs-gpio.h&gt;
-</code></pre><p>然后在397行左右，函数<code>static int s3c24xx_serial_startup(struct uart_port *port)</code>之前添加</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.ulcon</span> =<span class="number">0</span>x03,</div></pre></td></tr></table></figure>
+<p>修改<code>drivers/serial/samsung.c</code>文件的53行添加如下内容：</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;mach/regs-gpio.h&gt;</span></span></div></pre></td></tr></table></figure>
+<p>然后在397行左右，函数<code>static int s3c24xx_serial_startup(struct uart_port *port)</code>之前添加</p>
 <a id="more"></a>
-<pre><code>extern void s3c2410_gpio_cfgpin(unsigned int pin, unsigned int function);
-
-extern void s3c2410_gpio_pullup(unsigned int pin, unsigned int to);
-</code></pre><p>然后在462行左右添加以下注释说明处的代码：</p>
-<pre><code>dbg(&quot;s3c24xx_serial_startup ok\n&quot;);
-//添加以下代码
-if (port-&gt;line == 2) {
-    s3c2410_gpio_cfgpin(S3C2410_GPIONO(S3C2410_GPIO_BANKH, 6), S3C2410_GPH6_TXD2);
-    s3c2410_gpio_pullup(S3C2410_GPIONO(S3C2410_GPIO_BANKH, 6), 1);
-    s3c2410_gpio_cfgpin(S3C2410_GPIONO(S3C2410_GPIO_BANKH, 7), S3C2410_GPH7_RXD2);
-    s3c2410_gpio_pullup(S3C2410_GPIONO(S3C2410_GPIO_BANKH, 7), 1);
-}
-//添加以上代码
-return ret;
- err:
-s3c24xx_serial_shutdown(port);
-return ret;
-</code></pre><p>下面列出串口配置情况：</p>
-<pre><code>Device Drivers  --&gt;
-    Character devices  --&gt;
-        Serial drivers  --&gt;
-            &lt;&gt;8250/16550 and compatible serial support
-              ***Non-8250 serial port support***
-            &lt;*&gt;Samsung SoC serial support
-            [*]Support for console on Samsung SoC serial port
-            &lt;*&gt;Samsung S3C2440/S3C2442 Serial port support
-</code></pre>]]></content>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">extern</span> <span class="keyword">void</span> <span class="title">s3c2410_gpio_cfgpin</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> pin, <span class="keyword">unsigned</span> <span class="keyword">int</span> function)</span></span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">extern</span> <span class="keyword">void</span> <span class="title">s3c2410_gpio_pullup</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">int</span> pin, <span class="keyword">unsigned</span> <span class="keyword">int</span> to)</span></span>;</div></pre></td></tr></table></figure>
+<p>然后在462行左右添加以下注释说明处的代码：</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">dbg</span>(<span class="string">"s3c24xx_serial_startup ok\n"</span>);</div><div class="line"><span class="comment">//添加以下代码</span></div><div class="line"><span class="selector-tag">if</span> (port-&gt;line == <span class="number">2</span>) &#123;</div><div class="line">    <span class="selector-tag">s3c2410_gpio_cfgpin</span>(S3C2410_GPIONO(S3C2410_GPIO_BANKH, <span class="number">6</span>), S3C2410_GPH6_TXD2);</div><div class="line">    <span class="selector-tag">s3c2410_gpio_pullup</span>(S3C2410_GPIONO(S3C2410_GPIO_BANKH, <span class="number">6</span>), <span class="number">1</span>);</div><div class="line">    <span class="selector-tag">s3c2410_gpio_cfgpin</span>(S3C2410_GPIONO(S3C2410_GPIO_BANKH, <span class="number">7</span>), S3C2410_GPH7_RXD2);</div><div class="line">    <span class="selector-tag">s3c2410_gpio_pullup</span>(S3C2410_GPIONO(S3C2410_GPIO_BANKH, <span class="number">7</span>), <span class="number">1</span>);</div><div class="line">&#125;</div><div class="line"><span class="comment">//添加以上代码</span></div><div class="line"><span class="selector-tag">return</span> <span class="selector-tag">ret</span>;</div><div class="line"> <span class="selector-tag">err</span>:</div><div class="line"><span class="selector-tag">s3c24xx_serial_shutdown</span>(port);</div><div class="line"><span class="selector-tag">return</span> <span class="selector-tag">ret</span>;</div></pre></td></tr></table></figure>
+<p>下面列出串口配置情况：</p>
+<figure class="highlight vhdl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">Device Drivers  <span class="comment">--&gt;</span></div><div class="line">    <span class="built_in">Character</span> devices  <span class="comment">--&gt;</span></div><div class="line">        Serial drivers  <span class="comment">--&gt;</span></div><div class="line">            &lt;&gt;<span class="number">8250</span>/<span class="number">16550</span> <span class="keyword">and</span> compatible serial support</div><div class="line">              ***Non-<span class="number">8250</span> serial <span class="keyword">port</span> support***</div><div class="line">            &lt;*&gt;Samsung SoC serial support</div><div class="line">            [*]Support <span class="keyword">for</span> console <span class="keyword">on</span> Samsung SoC serial <span class="keyword">port</span></div><div class="line">            &lt;*&gt;Samsung S3C2440/S3C2442 Serial <span class="keyword">port</span> support</div></pre></td></tr></table></figure>
+]]></content>
       
         <categories>
             
@@ -2143,7 +1507,7 @@ return ret;
     <entry>
       <title><![CDATA[Linux命令行总汇(20120922更新)]]></title>
       <url>https://corey600.github.io/2012/08/31/linux-command/</url>
-      <content type="html"><![CDATA[<h3 id="1-修改全局环境变量操作"><a href="#1-修改全局环境变量操作" class="headerlink" title="1.修改全局环境变量操作"></a>1.修改全局环境变量操作</h3><p>运行以下命令</p>
+      <content type="html"><![CDATA[<h3 id="修改全局环境变量操作"><a href="#修改全局环境变量操作" class="headerlink" title="修改全局环境变量操作"></a>修改全局环境变量操作</h3><p>运行以下命令</p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ getdit <span class="regexp">/etc/</span>profile</div></pre></td></tr></table></figure>
 <p>在<code>/etc/profile</code>最后加上<code>export PATH=$PATH:[绝对路径]</code>，然后运行以下命令使之生效</p>
 <figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ <span class="keyword">source</span> <span class="regexp">/etc/</span>profile</div></pre></td></tr></table></figure>
@@ -2151,9 +1515,9 @@ return ret;
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> [ <span class="_">-d</span> /etc/profile.d ]; <span class="keyword">then</span></div><div class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> /etc/profile.d/*.sh; <span class="keyword">do</span></div><div class="line">    <span class="keyword">if</span> [ -r <span class="variable">$i</span> ]; <span class="keyword">then</span></div><div class="line">      . <span class="variable">$i</span></div><div class="line">    <span class="keyword">fi</span></div><div class="line">  <span class="keyword">done</span></div><div class="line">  <span class="built_in">unset</span> i</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure>
 <a id="more"></a>
 <p>也就是说，在<code>/etc/profile</code>执行的最后，它会自动的执行<code>/etc/profile.d</code>目录下的所有可读的文件。这就是我们将设置 <strong>JDK</strong> 环境变量的工作放在<code>/etc/profile.d/development.sh</code>的原因，可以不用修改操作系统自带的<code>/etc/profile</code>内容，方便系统的移植。</p>
-<h3 id="2-察看环境变量操作"><a href="#2-察看环境变量操作" class="headerlink" title="2.察看环境变量操作"></a>2.察看环境变量操作</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">echo</span> <span class="variable">$PATH</span></div></pre></td></tr></table></figure>
-<h3 id="3-解决ubuntu-12-04下TXT乱码问题"><a href="#3-解决ubuntu-12-04下TXT乱码问题" class="headerlink" title="3.解决ubuntu 12.04下TXT乱码问题"></a>3.解决ubuntu 12.04下TXT乱码问题</h3><figure class="highlight csp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ gsettings set org.gnome.gedit.preferences.encodings auto-detected "[<span class="string">'UTF-8'</span>,<span class="string">'GB18030'</span>,<span class="string">'GB2312'</span>,<span class="string">'GBK'</span>,<span class="string">'BIG5'</span>,<span class="string">'CURRENT'</span>,<span class="string">'UTF-16'</span>]"</div></pre></td></tr></table></figure>
-<h3 id="4-Ubuntu更改文件夹权限"><a href="#4-Ubuntu更改文件夹权限" class="headerlink" title="4.Ubuntu更改文件夹权限"></a>4.Ubuntu更改文件夹权限</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>sudo chmod <span class="number">600</span> ××× （只有所有者有读和写的权限）</div><div class="line"><span class="variable">$ </span>sudo chmod <span class="number">644</span> ××× （所有者有读和写的权限，组用户只有读的权限）</div><div class="line"><span class="variable">$ </span>sudo chmod <span class="number">700</span> ××× （只有所有者有读和写以及执行的权限）</div><div class="line"><span class="variable">$ </span>sudo chmod <span class="number">666</span> ××× （每个人都有读和写的权限）</div><div class="line"><span class="variable">$ </span>sudo chmod <span class="number">777</span> ××× （每个人都有读和写以及执行的权限）</div></pre></td></tr></table></figure>
+<h3 id="察看环境变量操作"><a href="#察看环境变量操作" class="headerlink" title="察看环境变量操作"></a>察看环境变量操作</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ <span class="built_in">echo</span> <span class="variable">$PATH</span></div></pre></td></tr></table></figure>
+<h3 id="解决ubuntu-12-04下TXT乱码问题"><a href="#解决ubuntu-12-04下TXT乱码问题" class="headerlink" title="解决ubuntu 12.04下TXT乱码问题"></a>解决ubuntu 12.04下TXT乱码问题</h3><figure class="highlight csp"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ gsettings set org.gnome.gedit.preferences.encodings auto-detected "[<span class="string">'UTF-8'</span>,<span class="string">'GB18030'</span>,<span class="string">'GB2312'</span>,<span class="string">'GBK'</span>,<span class="string">'BIG5'</span>,<span class="string">'CURRENT'</span>,<span class="string">'UTF-16'</span>]"</div></pre></td></tr></table></figure>
+<h3 id="Ubuntu更改文件夹权限"><a href="#Ubuntu更改文件夹权限" class="headerlink" title="Ubuntu更改文件夹权限"></a>Ubuntu更改文件夹权限</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>sudo chmod <span class="number">600</span> ××× （只有所有者有读和写的权限）</div><div class="line"><span class="variable">$ </span>sudo chmod <span class="number">644</span> ××× （所有者有读和写的权限，组用户只有读的权限）</div><div class="line"><span class="variable">$ </span>sudo chmod <span class="number">700</span> ××× （只有所有者有读和写以及执行的权限）</div><div class="line"><span class="variable">$ </span>sudo chmod <span class="number">666</span> ××× （每个人都有读和写的权限）</div><div class="line"><span class="variable">$ </span>sudo chmod <span class="number">777</span> ××× （每个人都有读和写以及执行的权限）</div></pre></td></tr></table></figure>
 <p>其中×××指文件名（也可以是文件夹名，不过要在chmod后加-ld）。命令的形式是</p>
 <figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>sudo chmod -（代表类型）×××（所有者）×××（组用户）×××（其他用户）</div></pre></td></tr></table></figure>
 <p>三位数的每一位都表示一个用户类型的权限设置。取值是0～7，即二进制的[000]~[111]。这个三位的二进制数的每一位分别表示读、写、执行权限。如000表示三项权限均无，而100表示只读。这样，我们就有了下面的对应：</p>
@@ -2163,10 +1527,10 @@ return ret;
 <li>6 [110] 读写权限    </li>
 <li>7 [111] 读写执行权限</li>
 </ul>
-<h3 id="5-查看内核版本"><a href="#5-查看内核版本" class="headerlink" title="5.查看内核版本"></a>5.查看内核版本</h3><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ <span class="keyword">cat</span> /proc/<span class="keyword">version</span></div></pre></td></tr></table></figure>
-<h3 id="6-修改目录所有者"><a href="#6-修改目录所有者" class="headerlink" title="6.修改目录所有者"></a>6.修改目录所有者</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>chown 用户名 文件名</div></pre></td></tr></table></figure>
-<h3 id="7-删除非空目录"><a href="#7-删除非空目录" class="headerlink" title="7.删除非空目录"></a>7.删除非空目录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ rm -rf 目录名        ;其中参数<span class="_">-f</span>表示force.</div></pre></td></tr></table></figure>
-<h3 id="8-执行make-menuconfig可能看到如下这样的错误"><a href="#8-执行make-menuconfig可能看到如下这样的错误" class="headerlink" title="8.执行make menuconfig可能看到如下这样的错误"></a>8.执行make menuconfig可能看到如下这样的错误</h3><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">*** Unable <span class="built_in">to</span> find <span class="keyword">the</span> ncurses libraries <span class="keyword">or</span> <span class="keyword">the</span></div><div class="line">*** required header <span class="built_in">files</span>.</div><div class="line">*** ‘make menuconfig’ requires <span class="keyword">the</span> ncurses libraries.</div><div class="line">*** Install ncurses (ncurses-devel) <span class="keyword">and</span> <span class="keyword">try</span> again.</div></pre></td></tr></table></figure>
+<h3 id="查看内核版本"><a href="#查看内核版本" class="headerlink" title="查看内核版本"></a>查看内核版本</h3><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ <span class="keyword">cat</span> /proc/<span class="keyword">version</span></div></pre></td></tr></table></figure>
+<h3 id="修改目录所有者"><a href="#修改目录所有者" class="headerlink" title="修改目录所有者"></a>修改目录所有者</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="variable">$ </span>chown 用户名 文件名</div></pre></td></tr></table></figure>
+<h3 id="删除非空目录"><a href="#删除非空目录" class="headerlink" title="删除非空目录"></a>删除非空目录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ rm -rf 目录名        ;其中参数<span class="_">-f</span>表示force.</div></pre></td></tr></table></figure>
+<h3 id="执行make-menuconfig可能看到如下这样的错误"><a href="#执行make-menuconfig可能看到如下这样的错误" class="headerlink" title="执行make menuconfig可能看到如下这样的错误"></a>执行make menuconfig可能看到如下这样的错误</h3><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">*** Unable <span class="built_in">to</span> find <span class="keyword">the</span> ncurses libraries <span class="keyword">or</span> <span class="keyword">the</span></div><div class="line">*** required header <span class="built_in">files</span>.</div><div class="line">*** ‘make menuconfig’ requires <span class="keyword">the</span> ncurses libraries.</div><div class="line">*** Install ncurses (ncurses-devel) <span class="keyword">and</span> <span class="keyword">try</span> again.</div></pre></td></tr></table></figure>
 <p>Ubuntu上解决办法如下：</p>
 <figure class="highlight q"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo apt-<span class="built_in">get</span> insatll ncurses-<span class="built_in">dev</span></div></pre></td></tr></table></figure>
 ]]></content>
