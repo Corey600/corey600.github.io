@@ -6,9 +6,10 @@
     <entry>
       <title><![CDATA[React多语言方案]]></title>
       <url>https://corey600.github.io/2017/04/20/react-international/</url>
-      <content type="html"><![CDATA[<h1 id="React多语言方案"><a href="#React多语言方案" class="headerlink" title="React多语言方案"></a>React多语言方案</h1><p>由于框架使用的是 <a href="https://facebook.github.io/react/" target="_blank" rel="external">React</a> ， 多语言方案也选择了生态系统下的 <a href="https://github.com/yahoo/react-intl" target="_blank" rel="external">react-intl</a> 模块，它是雅虎 <a href="https://formatjs.io/" target="_blank" rel="external">FormatJS</a> 计划的一部分。</p>
-<h2 id="翻译字符串替换"><a href="#翻译字符串替换" class="headerlink" title="翻译字符串替换"></a>翻译字符串替换</h2><p>使用 <a href="https://github.com/yahoo/react-intl" target="_blank" rel="external">react-intl</a> 替换字符串用以翻译很方便。只需将整个业务父组件包裹在 IntlProvider 中：</p>
+      <content type="html"><![CDATA[<p>由于框架使用的是 <a href="https://facebook.github.io/react/" target="_blank" rel="external">React</a> ， 多语言方案也选择了生态系统下的 <a href="https://github.com/yahoo/react-intl" target="_blank" rel="external">react-intl</a> 模块，它是雅虎 <a href="https://formatjs.io/" target="_blank" rel="external">FormatJS</a> 计划的一部分。</p>
+<h3 id="翻译字符串替换"><a href="#翻译字符串替换" class="headerlink" title="翻译字符串替换"></a>翻译字符串替换</h3><p>使用 <a href="https://github.com/yahoo/react-intl" target="_blank" rel="external">react-intl</a> 替换字符串用以翻译很方便。只需将整个业务父组件包裹在 IntlProvider 中：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">ReactDOM.render(</div><div class="line">    <span class="xml"><span class="tag">&lt;<span class="name">IntlProvider</span></span></span></div><div class="line">        <span class="attr">locale</span>=<span class="string">&#123;usersLocale&#125;</span></div><div class="line">        <span class="attr">messages</span>=<span class="string">&#123;translationsForUsersLocale&#125;</span></div><div class="line">    &gt;</div><div class="line">        <span class="tag">&lt;<span class="name">App</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">IntlProvider</span>&gt;</span>,</div><div class="line">    <span class="built_in">document</span>.getElementById(<span class="string">'container'</span>)</div><div class="line">);</div></pre></td></tr></table></figure>
+<a id="more"></a>
 <p>其中<code>usersLocale</code>是当前选择的语言，<code>translationsForUsersLocale</code>是用于翻译的键值对数据。</p>
 <p>在业务父组件中要显示字符串时插入<code>FormattedRelative</code>组件，其中key是上文提到的翻译键值对中的对应key值：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">FormattedRelative</span> <span class="attr">value</span>=<span class="string">&#123;key&#125;/</span>&gt;</span></div></pre></td></tr></table></figure>
@@ -17,7 +18,7 @@
 <figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> &#123;addLocaleData&#125; <span class="keyword">from</span> <span class="string">'react-intl'</span>;</div><div class="line"><span class="keyword">import</span> en <span class="keyword">from</span> <span class="string">'react-intl/locale-data/en'</span>;</div><div class="line"><span class="keyword">import</span> fr <span class="keyword">from</span> <span class="string">'react-intl/locale-data/fr'</span>;</div><div class="line"><span class="keyword">import</span> es <span class="keyword">from</span> <span class="string">'react-intl/locale-data/es'</span>;</div><div class="line"></div><div class="line">addLocaleData([...en, ...fr, ...es]);</div></pre></td></tr></table></figure>
 <p>如果是在低版本的浏览器环境下，还需要考虑加载 ployfill 库，具体可以参考 <a href="https://formatjs.io/guides/runtime-environments/#polyfill-browsers" target="_blank" rel="external">How to Polyfill Browsers</a>。</p>
 <figure class="highlight xl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> 'intl/locale-<span class="keyword">data</span>/jsonp/en';</div><div class="line"><span class="keyword">import</span> 'intl/locale-<span class="keyword">data</span>/jsonp/fr';</div><div class="line"><span class="keyword">import</span> 'intl/locale-<span class="keyword">data</span>/jsonp/es';</div></pre></td></tr></table></figure>
-<h2 id="获取当前语言"><a href="#获取当前语言" class="headerlink" title="获取当前语言"></a>获取当前语言</h2><p>由于当前业务需要，在获取当前语言时，还需要考虑到该用户属性，即保存在后端的语言属性。</p>
+<h3 id="获取当前语言"><a href="#获取当前语言" class="headerlink" title="获取当前语言"></a>获取当前语言</h3><p>由于当前业务需要，在获取当前语言时，还需要考虑到该用户属性，即保存在后端的语言属性。</p>
 <p>基本流程：</p>
 <ul>
 <li>=&gt; 有则获取使用后端保存的语言</li>
@@ -25,15 +26,15 @@
 <li>=&gt; 有则获取使用系统的语言</li>
 </ul>
 <p>在获取系统使用语言时，使用了 <a href="https://github.com/moimikey/locale2" target="_blank" rel="external">locale2</a> 组件。</p>
-<h2 id="切换语言、按需加载"><a href="#切换语言、按需加载" class="headerlink" title="切换语言、按需加载"></a>切换语言、按需加载</h2><p>考虑提供切换语言功能，基本实现原理比较简单，只要修改保存的语言值（包括修改后台保存的值和保存在浏览器cookie中的值），然后reload当前页面。</p>
+<h3 id="切换语言、按需加载"><a href="#切换语言、按需加载" class="headerlink" title="切换语言、按需加载"></a>切换语言、按需加载</h3><p>考虑提供切换语言功能，基本实现原理比较简单，只要修改保存的语言值（包括修改后台保存的值和保存在浏览器cookie中的值），然后reload当前页面。</p>
 <p>但是这样做的缺点是，必须事先加载所有可能的语言的资源文件，包括浏览器polyfill和翻译文件。在当前用户只使用一种特定语言的情况下，会造成加载资源的浪费，拖慢加载速度。</p>
 <p>但是考虑到，ES6 的 import 是禁止动态引入模块文件的（基于可能的优化角度做的限制），好在我们并不是在原生的环境下使用 ES6 的 import 特性。事实上，在使用 webpack2.x 的情况下，这里的 import 是 webpack 模块方案提供的工具，然而 webpack2.x 是支持动态的 import 的，具体参考官方文档 <a href="https://webpack.js.org/guides/code-splitting-async/#dynamic-import-import-" target="_blank" rel="external">webpack - Dynamic import</a>。</p>
 <p>动态加载的 demo 就可以这么写：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">importLocale</span>(<span class="params">locale</span>) </span>&#123;</div><div class="line">  <span class="built_in">Promise</span>.all([</div><div class="line">	<span class="comment">// 加载 polyfill</span></div><div class="line">	<span class="keyword">import</span>(<span class="string">`intl/locale-data/jsonp/<span class="subst">$&#123;locale&#125;</span>`</span>),</div><div class="line">	<span class="comment">// 加载 react-intl 资源文件</span></div><div class="line">	<span class="keyword">import</span>(<span class="string">`react-intl/locale-data/<span class="subst">$&#123;locale&#125;</span>`</span>),</div><div class="line">	<span class="comment">// 加载翻译文件</span></div><div class="line">	<span class="keyword">import</span>(<span class="string">`../../locales/<span class="subst">$&#123;getFilename(locale)&#125;</span>`</span>),</div><div class="line">  ]).</div><div class="line">	then(<span class="function">(<span class="params">values</span>) =&gt;</span> &#123;</div><div class="line">	  addLocaleData([...values[<span class="number">1</span>]]);</div><div class="line">	  <span class="keyword">let</span> messages = values[<span class="number">2</span>].default;</div><div class="line">	&#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">importLocale</span>(<span class="params">locale</span>) </span>&#123;</div><div class="line">  <span class="built_in">Promise</span>.all([</div><div class="line">  <span class="comment">// 加载 polyfill</span></div><div class="line">  <span class="keyword">import</span>(<span class="string">`intl/locale-data/jsonp/<span class="subst">$&#123;locale&#125;</span>`</span>),</div><div class="line">  <span class="comment">// 加载 react-intl 资源文件</span></div><div class="line">  <span class="keyword">import</span>(<span class="string">`react-intl/locale-data/<span class="subst">$&#123;locale&#125;</span>`</span>),</div><div class="line">  <span class="comment">// 加载翻译文件</span></div><div class="line">  <span class="keyword">import</span>(<span class="string">`../../locales/<span class="subst">$&#123;getFilename(locale)&#125;</span>`</span>),</div><div class="line">  ]).</div><div class="line">  then(<span class="function">(<span class="params">values</span>) =&gt;</span> &#123;</div><div class="line">    addLocaleData([...values[<span class="number">1</span>]]);</div><div class="line">    <span class="keyword">let</span> messages = values[<span class="number">2</span>].default;</div><div class="line">  &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>会注意到，这里使用了 Promise，因为其实动态 import 可以看成一个函数，返回了一个 Promise 对象。动态加载需要并行执行的话，需要使用 Promise.all 。当然在不支持 Promise 的低版本浏览器，需要引入 相应 ployfill ，比如 <a href="https://github.com/stefanpenner/es6-promise" target="_blank" rel="external">es6-promise</a>。</p>
 <p>最后，我们在 webpack 的打包配置文件中，给 babel 增加一个插件，这个 <a href="https://webpack.js.org/guides/code-splitting-async/#dynamic-import-import-" target="_blank" rel="external">webpack - Dynamic import</a> 也有说明。</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="string">module.exports</span> <span class="string">=</span> <span class="string">&#123;</span></div><div class="line"><span class="attr">  entry:</span> <span class="string">'./index-es2015.js'</span><span class="string">,</span></div><div class="line"><span class="attr">  output:</span> <span class="string">&#123;</span></div><div class="line"><span class="attr">    filename:</span> <span class="string">'dist.js'</span><span class="string">,</span></div><div class="line">  <span class="string">&#125;,</span></div><div class="line"><span class="attr">  module:</span> <span class="string">&#123;</span></div><div class="line"><span class="attr">    rules:</span> <span class="string">[&#123;</span></div><div class="line"><span class="attr">      test:</span> <span class="string">/\.js$/,</span></div><div class="line"><span class="attr">      exclude:</span> <span class="string">/(node_modules)/,</span></div><div class="line"><span class="attr">      use:</span> <span class="string">[&#123;</span></div><div class="line"><span class="attr">        loader:</span> <span class="string">'babel-loader'</span><span class="string">,</span></div><div class="line"><span class="attr">        options:</span> <span class="string">&#123;</span></div><div class="line"><span class="attr">          presets:</span> <span class="string">[['es2015',</span> <span class="string">&#123;modules:</span> <span class="literal">false</span><span class="string">&#125;]],</span></div><div class="line"><span class="attr">          plugins:</span> <span class="string">['syntax-dynamic-import']</span></div><div class="line">        <span class="string">&#125;</span></div><div class="line">      <span class="string">&#125;]</span></div><div class="line">    <span class="string">&#125;]</span></div><div class="line">  <span class="string">&#125;</span></div><div class="line"><span class="string">&#125;;</span></div></pre></td></tr></table></figure>
-<h2 id="已知问题"><a href="#已知问题" class="headerlink" title="已知问题"></a>已知问题</h2><p>在IE浏览器环境下，直接使用上文的动态加载文件方案，会报找不到 react-intl 资源文件错误，初步判断是加载顺序的问题。解决方案是把英文当成默认语言，先加载对应资源文件。再根据实际具体语言加载文件。</p>
+<h3 id="已知问题"><a href="#已知问题" class="headerlink" title="已知问题"></a>已知问题</h3><p>在IE浏览器环境下，直接使用上文的动态加载文件方案，会报找不到 react-intl 资源文件错误，初步判断是加载顺序的问题。解决方案是把英文当成默认语言，先加载对应资源文件。再根据实际具体语言加载文件。</p>
 <p><em>后话：</em></p>
 <p>事实上，很多动态加载多语言资源文件的方案，是直接在 html 中添加 <code>script</code> 标签，然后动态修改标签中路径的值。但这里考虑到统一构建方案，翻译文件需要修改而必须添加md5值等等一些比较麻烦的处理，而选择了上文这样的动态加载方式。</p>
 ]]></content>
@@ -1393,9 +1394,9 @@
         
         <tags>
             
-            <tag> TQ2440 </tag>
-            
             <tag> Linux </tag>
+            
+            <tag> TQ2440 </tag>
             
             <tag> Ubuntu </tag>
             
@@ -1430,9 +1431,9 @@
         
         <tags>
             
-            <tag> TQ2440 </tag>
-            
             <tag> Linux </tag>
+            
+            <tag> TQ2440 </tag>
             
             <tag> LCD </tag>
             
@@ -1465,9 +1466,9 @@
         
         <tags>
             
-            <tag> TQ2440 </tag>
-            
             <tag> Linux </tag>
+            
+            <tag> TQ2440 </tag>
             
             <tag> 串口 </tag>
             
